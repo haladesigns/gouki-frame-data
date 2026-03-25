@@ -2,7 +2,7 @@
   "name": "Gouki Frame Data",
   "short_name": "Gouki FD",
   "description": "SF6 Gouki frame data reference, combo builder and cancel routes",
-  "start_url": "./gouki_frame_data.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0a0a0c",

@@ -12,7 +12,7 @@
 const CACHE_VERSION = 'gouki-fd-v1';
 
 const ASSETS = [
-  './gouki_frame_data.html',
+  './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
