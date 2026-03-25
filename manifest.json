@@ -1,0 +1,26 @@
+{
+  "name": "Gouki Frame Data",
+  "short_name": "Gouki FD",
+  "description": "SF6 Gouki frame data reference, combo builder and cancel routes",
+  "start_url": "./gouki_frame_data.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0c",
+  "theme_color": "#0a0a0c",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "utilities"],
+  "screenshots": []
+}

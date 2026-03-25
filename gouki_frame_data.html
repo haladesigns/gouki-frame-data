@@ -1,0 +1,3225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gouki — Frame Data</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gouki FD">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0c;
+    --surface: #111114;
+    --surface2: #18181d;
+    --border: rgba(255,255,255,0.07);
+    --border-strong: rgba(255,255,255,0.14);
+    --text: #e8e6e0;
+    --muted: #6b6a66;
+    --dim: #3a3a40;
+    --accent: #c8372d;
+    --accent-dim: rgba(200,55,45,0.15);
+    --accent-border: rgba(200,55,45,0.4);
+    --gold: #c9973a;
+    --gold-dim: rgba(201,151,58,0.12);
+    --gold-border: rgba(201,151,58,0.35);
+    --green: #2e7a4f;
+    --green-dim: rgba(46,122,79,0.12);
+    --green-border: rgba(46,122,79,0.35);
+    --blue: #2d6fa8;
+    --blue-dim: rgba(45,111,168,0.12);
+    --blue-border: rgba(45,111,168,0.35);
+    --purple: #6b3fa8;
+    --purple-dim: rgba(107,63,168,0.12);
+    --purple-border: rgba(107,63,168,0.35);
+    --toggle-bg: #2a2a30;
+    --toggle-knob: #e8e6e0;
+  }
+
+  :root.light {
+    --bg: #f4f2ed;
+    --surface: #ffffff;
+    --surface2: #eceae4;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.15);
+    --text: #1a1a1e;
+    --muted: #8a8880;
+    --dim: #c8c6c0;
+    --accent: #b02e25;
+    --accent-dim: rgba(176,46,37,0.08);
+    --accent-border: rgba(176,46,37,0.3);
+    --gold: #9c6e1a;
+    --gold-dim: rgba(156,110,26,0.08);
+    --gold-border: rgba(156,110,26,0.3);
+    --green: #1f6b3e;
+    --green-dim: rgba(31,107,62,0.08);
+    --green-border: rgba(31,107,62,0.3);
+    --blue: #1a5a94;
+    --blue-dim: rgba(26,90,148,0.08);
+    --blue-border: rgba(26,90,148,0.3);
+    --purple: #5a2e96;
+    --purple-dim: rgba(90,46,150,0.08);
+    --purple-border: rgba(90,46,150,0.3);
+    --toggle-bg: #d8d6d0;
+    --toggle-knob: #1a1a1e;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border-strong);
+    padding: 2.5rem 3rem 2rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    letter-spacing: 0.04em;
+    line-height: 0.9;
+    color: var(--text);
+  }
+  .header-left h1 span { color: var(--accent); }
+  .header-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .header-stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .hstat { text-align: right; }
+  .hstat-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--gold);
+  }
+  .hstat-lbl {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 0 3rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 14px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  .main { padding: 2rem 3rem 4rem; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CARD GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+    margin-bottom: 2.5rem;
+  }
+
+  .move-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    transition: border-color .15s, background .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .move-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--dim);
+    transition: background .15s;
+  }
+  .move-card:hover { background: var(--surface2); border-color: var(--border-strong); }
+
+  .move-card.cat-normal::before { background: var(--blue); }
+  .move-card.cat-unique::before { background: var(--gold); }
+  .move-card.cat-special::before { background: var(--accent); }
+  .move-card.cat-super::before { background: var(--purple); }
+  .move-card.cat-throw::before { background: var(--green); }
+  .move-card.cat-combo::before { background: var(--accent); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .card-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .card-fullname {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+  }
+  .card-badges { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .badge-low { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+  .badge-overhead { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+  .badge-high { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--dim); }
+  .badge-special { background: var(--blue-dim); color: #5a9fd4; border: 1px solid var(--blue-border); }
+  .badge-inv { background: var(--green-dim); color: #5ab87a; border: 1px solid var(--green-border); }
+  .badge-kd { background: var(--purple-dim); color: #a07ad4; border: 1px solid var(--purple-border); }
+
+  /* STATS STRIP */
+  .stats-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .stat-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  .stat-lbl {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .stat-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .val-pos { color: #5ab87a; }
+  .val-neg { color: var(--accent); }
+  .val-neu { color: var(--text); }
+  .val-gold { color: var(--gold); }
+
+  .card-note {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.55;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 2px;
+  }
+  .card-note strong { color: #8a8880; font-weight: 500; }
+
+  /* COMBO CARDS */
+  .combo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .combo-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+  }
+  .combo-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .combo-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .combo-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .combo-stat {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .combo-stat.dmg { color: var(--accent); border-color: var(--accent-border); background: var(--accent-dim); }
+  .combo-stat.diff { color: var(--gold); border-color: var(--gold-border); background: var(--gold-dim); }
+  .combo-sequence {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .combo-input {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--surface2);
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 4px 10px;
+    color: var(--text);
+  }
+  .combo-arrow {
+    color: var(--dim);
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .combo-cancel {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    align-self: flex-end;
+    margin-bottom: 2px;
+  }
+  .combo-why {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+  .combo-why strong { color: #8a8880; font-weight: 500; }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* THEME TOGGLE */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle-track {
+    width: 40px;
+    height: 22px;
+    background: var(--toggle-bg);
+    border-radius: 11px;
+    position: relative;
+    transition: background .2s;
+    border: 1px solid var(--border-strong);
+    flex-shrink: 0;
+  }
+  .toggle-knob {
+    width: 16px;
+    height: 16px;
+    background: var(--toggle-knob);
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform .2s, background .2s;
+  }
+  .light .toggle-knob { transform: translateX(18px); }
+  .toggle-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    min-width: 28px;
+  }
+
+  /* CANCEL ROUTES */
+  .cancel-table-wrap { overflow-x: auto; margin-bottom: 2.5rem; }
+  .cancel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    min-width: 600px;
+  }
+  .cancel-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border-strong);
+    white-space: nowrap;
+  }
+  .cancel-table th.center { text-align: center; }
+  .cancel-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  .cancel-table tr:last-child td { border-bottom: none; }
+  .cancel-table tr:hover td { background: var(--surface2); }
+  .cancel-table td.move-col {
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .cancel-table td.name-col {
+    color: var(--muted);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+  }
+  .cancel-table td.center { text-align: center; }
+  .ct-yes {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--green-dim);
+    border: 1px solid var(--green-border);
+    position: relative;
+  }
+  .ct-yes::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%) rotate(45deg);
+    width: 5px; height: 9px;
+    border-right: 1.5px solid var(--green);
+    border-bottom: 1.5px solid var(--green);
+  }
+  .ct-no {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .ct-no::after {
+    content: '—';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    color: var(--dim);
+    line-height: 1;
+  }
+  .ct-cond {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-border);
+    position: relative;
+  }
+  .ct-cond::after {
+    content: '~';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -52%);
+    font-size: 11px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .cancel-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .cancel-note-row td {
+    padding: 6px 12px 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border) !important;
+    line-height: 1.5;
+  }
+  .cancel-note-row td strong { color: var(--text); font-weight: 500; }
+  .col-header-chain { color: #5a9fd4; }
+  .col-header-special { color: var(--accent); }
+  .col-header-super { color: #a07ad4; }
+  .col-header-tc { color: var(--gold); }
+  .col-header-dr { color: #5ab87a; }
+
+  /* LINKS SECTION */
+  .link-intro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 1.5rem;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.7;
+  }
+  .link-intro strong { color: var(--text); font-weight: 500; }
+  .link-intro .formula {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 2px 10px;
+    margin: 0 4px;
+    color: var(--gold);
+    font-size: 12px;
+  }
+  .link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+    margin-bottom: 2.5rem;
+  }
+  .link-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .15s, background .15s;
+  }
+  .link-card:hover { background: var(--surface2); border-color: var(--border-strong); }
+  .link-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+  }
+  .link-card.diff-1::before { background: var(--accent); }
+  .link-card.diff-2::before { background: var(--gold); }
+  .link-card.diff-3::before { background: var(--green); }
+  .link-card.diff-easy::before { background: var(--blue); }
+  .link-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .link-moves {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .link-move-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--surface2);
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 3px 9px;
+    color: var(--text);
+  }
+  .link-move-pill.highlight {
+    background: var(--accent-dim);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+  .link-arrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .link-difficulty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  .diff-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .diff-badge.f1 { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+  .diff-badge.f2 { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+  .diff-badge.f3 { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+  .diff-badge.easy { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
+  .link-math {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .math-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--surface2);
+  }
+  .math-chip .val { font-weight: 500; }
+  .math-chip .val.pos { color: #5ab87a; }
+  .math-chip .val.neg { color: var(--accent); }
+  .math-chip .val.neu { color: var(--text); }
+  .math-chip .val.gold { color: var(--gold); }
+  .math-equals {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .link-window {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+  .link-window.tight { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+  .link-window.med { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+  .link-window.easy { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+  .link-note {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.55;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .link-note strong { color: var(--text); font-weight: 500; }
+  .links-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    align-items: center;
+  }
+  .links-legend .leg { display: flex; align-items: center; gap: 6px; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  @media (max-width: 600px) {
+    .header, .main, .nav, .footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .stats-strip { grid-template-columns: repeat(2, 1fr); }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+  /* ── COMBO BUILDER ─────────────────────────────────── */
+  .cb-layout { display: grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .cb-layout { grid-template-columns: 1fr; } }
+
+  .cb-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .cb-panel-title { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+
+  /* situation bar */
+  .cb-situation { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .sit-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 5px 12px; border-radius: 4px; border: 1px solid var(--border-strong); background: transparent; color: var(--muted); cursor: pointer; transition: all .12s; letter-spacing: .04em; }
+  .sit-btn:hover { color: var(--text); border-color: var(--border-strong); }
+  .sit-btn.active { background: var(--surface2); color: var(--text); border-color: var(--border-strong); }
+  .sit-btn.sit-normal.active { border-color: var(--blue-border); color: #5a9fd4; background: var(--blue-dim); }
+  .sit-btn.sit-ch.active { border-color: var(--gold-border); color: var(--gold); background: var(--gold-dim); }
+  .sit-btn.sit-pc.active { border-color: var(--accent-border); color: var(--accent); background: var(--accent-dim); }
+  .sit-btn.sit-dr.active { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+  .sit-desc { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 14px; padding: 6px 10px; background: var(--surface2); border-radius: 4px; border-left: 3px solid var(--border-strong); }
+
+  /* sequence strip */
+  .cb-sequence { min-height: 64px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; padding: 10px; background: var(--surface2); border-radius: 6px; border: 1px solid var(--border); margin-bottom: 12px; }
+  .cb-seq-empty { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--dim); }
+  .cb-seq-move { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .cb-seq-pill { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 3px; background: var(--surface); border: 1px solid var(--border-strong); color: var(--text); cursor: pointer; transition: all .1s; white-space: nowrap; }
+  .cb-seq-pill:hover { background: var(--accent-dim); border-color: var(--accent-border); color: var(--accent); }
+  .cb-seq-pill.valid-link { border-color: var(--green-border); }
+  .cb-seq-pill.valid-cancel { border-color: var(--blue-border); }
+  .cb-seq-pill.valid-chain { border-color: var(--gold-border); }
+  .cb-seq-connector { font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 5px; border-radius: 2px; margin: 0 1px; }
+  .conn-link { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+  .conn-cancel { background: var(--blue-dim); color: #5a9fd4; border: 1px solid var(--blue-border); }
+  .conn-chain { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+  .conn-invalid { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+
+  /* move picker */
+  .cb-picker-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 8px; }
+  .cb-picker-grid { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+  .cb-pick-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 5px 10px; border-radius: 3px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); cursor: pointer; transition: all .1s; white-space: nowrap; }
+  .cb-pick-btn:hover:not(:disabled) { color: var(--text); border-color: var(--border-strong); background: var(--surface); }
+  .cb-pick-btn.valid { color: var(--text); border-color: var(--border-strong); background: var(--surface); }
+  .cb-pick-btn.valid-link { border-color: var(--green-border); color: #5ab87a; }
+  .cb-pick-btn.valid-cancel { border-color: var(--blue-border); color: #5a9fd4; }
+  .cb-pick-btn.valid-chain { border-color: var(--gold-border); color: var(--gold); }
+  .cb-pick-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .cb-pick-btn.starter { border-color: var(--border-strong); color: var(--text); }
+  .cb-pick-btn.selected { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* validity hint */
+  .cb-hint { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 12px; min-height: 16px; }
+  .cb-hint .link-ok { color: var(--green); }
+  .cb-hint .cancel-ok { color: #5a9fd4; }
+  .cb-hint .chain-ok { color: var(--gold); }
+  .cb-hint .invalid { color: var(--accent); }
+
+  /* controls */
+  .cb-controls { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .cb-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border-strong); background: transparent; color: var(--muted); cursor: pointer; transition: all .12s; }
+  .cb-btn:hover { color: var(--text); background: var(--surface2); }
+  .cb-btn.primary { border-color: var(--accent-border); color: var(--accent); }
+  .cb-btn.primary:hover { background: var(--accent-dim); }
+
+  /* summary panel */
+  .cb-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+  .cb-stat-box { background: var(--surface2); border-radius: 4px; padding: 8px 10px; text-align: center; }
+  .cb-stat-val { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 500; color: var(--text); line-height: 1; }
+  .cb-stat-val.good { color: #5ab87a; }
+  .cb-stat-val.warn { color: var(--gold); }
+  .cb-stat-val.bad { color: var(--accent); }
+  .cb-stat-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; }
+
+  /* step log */
+  .cb-log { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.8; color: var(--muted); }
+  .cb-log-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 3px 0; gap: 8px; }
+  .cb-log-row:last-child { border-bottom: none; }
+  .cb-log-move { color: var(--text); font-weight: 500; min-width: 60px; }
+  .cb-log-dmg { color: var(--accent); min-width: 50px; text-align: right; }
+  .cb-log-adv { min-width: 50px; text-align: right; }
+  .cb-log-type { font-size: 9px; padding: 1px 5px; border-radius: 2px; }
+
+  /* oki verdict */
+  .cb-oki { margin-top: 10px; padding: 10px 12px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface2); font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.6; }
+  .cb-oki strong { color: var(--text); font-weight: 500; }
+  .cb-oki.has-kd { border-color: var(--green-border); background: var(--green-dim); }
+  .cb-oki.has-kd strong { color: var(--green); }
+
+  /* opponent slot hook — ready for v2 */
+  .cb-opponent-slot { border: 1px dashed var(--border-strong); border-radius: 6px; padding: 12px 14px; margin-bottom: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--dim); text-align: center; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>GOÜ<span>KI</span></h1>
+    <div class="header-sub">SF6 &nbsp;·&nbsp; Frame Data Reference &nbsp;·&nbsp; March 2026 Patch</div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><div class="hstat-val">9,000</div><div class="hstat-lbl">Health</div></div>
+    <div class="hstat"><div class="hstat-val">5.2</div><div class="hstat-lbl">Fwd Walk</div></div>
+    <div class="hstat"><div class="hstat-val">19f</div><div class="hstat-lbl">Fwd Dash</div></div>
+    <div class="hstat"><div class="hstat-val">4f</div><div class="hstat-lbl">Prejump</div></div>
+    <div class="hstat" style="display:flex;align-items:center;padding-bottom:4px;">
+      <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+        <span class="toggle-label" id="theme-label">Dark</span>
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showSection('normals', this)">Normals</button>
+  <button class="nav-btn" onclick="showSection('unique', this)">Unique / TC</button>
+  <button class="nav-btn" onclick="showSection('specials', this)">Specials</button>
+  <button class="nav-btn" onclick="showSection('supers', this)">Supers</button>
+  <button class="nav-btn" onclick="showSection('throws', this)">Throws</button>
+  <button class="nav-btn" onclick="showSection('combos', this)">Combos</button>
+  <button class="nav-btn" onclick="showSection('cancels', this)">Cancel Routes</button>
+  <button class="nav-btn" onclick="showSection('links', this)">Links</button>
+  <button class="nav-btn" onclick="showSection('builder', this)">Combo Builder</button>
+</nav>
+
+<main class="main">
+
+  <!-- NORMALS -->
+  <section class="section active" id="normals">
+    <div class="section-title">Standing normals</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">st.LP</div><div class="card-fullname">Standing Light Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">4f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">3f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+4</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-1</div></div>
+        </div>
+        <div class="card-note">Chain / Special / Super cancellable. Fast jab for close-range pressure. Safe on block.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">st.MP</div><div class="card-fullname">Standing Medium Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">6f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">4f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+4</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-pos">+1</div></div>
+        </div>
+        <div class="card-note"><strong>+1 on block</strong> — plus on block, pressure tool. Mar 2026: recovery +2 on whiff, hurtbox expanded.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">st.HP</div><div class="card-fullname">Standing Heavy Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">9f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">5f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+3</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-3</div></div>
+        </div>
+        <div class="card-note">Special / Super cancellable. High damage starter, minus on block — use wisely.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">st.LK</div><div class="card-fullname">Standing Light Kick</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">5f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">3f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+2</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-4</div></div>
+        </div>
+        <div class="card-note">Caution: -4 on block is punishable by some characters. Use as a chain starter.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">st.MK</div><div class="card-fullname">Standing Medium Kick</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">7f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">5f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+3</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-3</div></div>
+        </div>
+        <div class="card-note">Forces standing on crouching opponents. Good for combos. Target combo starter.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">st.HK</div><div class="card-fullname">Standing Heavy Kick</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">13f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">3+4f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+7</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-pos">+3</div></div>
+        </div>
+        <div class="card-note"><strong>+3 on block</strong> — 2-hit move. First hit forces standing; second whiffs on crouchers. Huge + on block when both connect.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Crouching normals</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">cr.LP</div><div class="card-fullname">Crouching Light Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">4f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">2f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+5</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-1</div></div>
+        </div>
+        <div class="card-note"><strong>Core weapon.</strong> +5 on hit links into second cr.LP. Virtually safe on block (-1). Hit confirm starter.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">cr.MP</div><div class="card-fullname">Crouching Medium Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">6f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">3f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+6</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-1</div></div>
+        </div>
+        <div class="card-note">+6 on hit — big frame advantage. Links into cr.LP or st.MP. Jun 2025: +2f recovery on whiff.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">cr.HP</div><div class="card-fullname">Crouching Heavy Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-inv">Anti-Air</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">8f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">8f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+1</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-8</div></div>
+        </div>
+        <div class="card-note"><strong>Anti-air inv frames 8–16.</strong> Forces standing on crouchers. Very unsafe on block (-8) — only use on reaction.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">cr.LK</div><div class="card-fullname">Crouching Light Kick</div></div>
+          <div class="card-badges"><span class="badge badge-low">Low</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">5f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">2f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+3</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-3</div></div>
+        </div>
+        <div class="card-note">Low hit, chain cancellable. Use to poke low when opponent is blocking high. Link into cr.LP on hit.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">cr.MK</div><div class="card-fullname">Crouching Medium Kick</div></div>
+          <div class="card-badges"><span class="badge badge-low">Low</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">8f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">3f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+1</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-6</div></div>
+        </div>
+        <div class="card-note"><strong>Core weapon.</strong> Primary footsie tool. Cancel into Hadouken on hit. -6 on block — respect pushback at max range. 20% damage scaling.</div>
+      </div>
+
+      <div class="move-card cat-normal">
+        <div class="card-top">
+          <div><div class="card-name">cr.HK</div><div class="card-fullname">Crouching Heavy Kick</div></div>
+          <div class="card-badges"><span class="badge badge-low">Low</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">9f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">3f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-gold">KD+40</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-12</div></div>
+        </div>
+        <div class="card-note">Sweep. Hard knockdown on hit — oki setup. Extremely punishable on block (-12). Only use at max range or as a punish.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- UNIQUE / TC -->
+  <section class="section" id="unique">
+    <div class="section-title">Unique attacks</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-unique">
+        <div class="card-top">
+          <div><div class="card-name">f+MP</div><div class="card-fullname">Skull Splitter</div></div>
+          <div class="card-badges"><span class="badge badge-overhead">Overhead</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">20f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">1+3f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+3</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-1</div></div>
+        </div>
+        <div class="card-note">2-hit overhead. Safe on block (-1). Mix-up tool to hit crouching opponents. Slow startup — easy to react to at range.</div>
+      </div>
+
+      <div class="move-card cat-unique">
+        <div class="card-top">
+          <div><div class="card-name">f+MK</div><div class="card-fullname">Resso Snap Kick</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">10f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">3f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+5</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-4</div></div>
+        </div>
+        <div class="card-note">+5 on hit — strong frame advantage. Dec 2024: +1f recovery, expanded hurtbox late. Slightly risky on block (-4).</div>
+      </div>
+
+      <div class="move-card cat-unique">
+        <div class="card-top">
+          <div><div class="card-name">b+HK</div><div class="card-fullname">Rago High Kick</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-kd">Knockdown</span><span class="badge badge-inv">Anti-Air</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">12f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">5f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-gold">KD+47</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-15</div></div>
+        </div>
+        <div class="card-note"><strong>Anti-air inv 12–16.</strong> Juggle state on hit. Huge KD advantage (+47). Very punishable on block — anti-air use only.</div>
+      </div>
+
+      <div class="move-card cat-unique">
+        <div class="card-top">
+          <div><div class="card-name">f+HP</div><div class="card-fullname">Forward Heavy Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">13f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Active</div><div class="stat-val val-neu">4f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On hit</div><div class="stat-val val-pos">+4</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-3</div></div>
+        </div>
+        <div class="card-note">Target combo starter (Kikoku Combination). Jun 2025: expanded hurtbox. Relatively safe on block (-3).</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Target combos</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-unique">
+        <div class="card-top">
+          <div><div class="card-name">MP, MP</div><div class="card-fullname">Viscera Piercer</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span><span class="badge badge-special">Cancel</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">6/7f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1300</div></div>
+          <div class="stat-box"><div class="stat-lbl">Hit (2nd)</div><div class="stat-val val-neg">-1</div></div>
+          <div class="stat-box"><div class="stat-lbl">Block (2nd)</div><div class="stat-val val-neg">-6</div></div>
+        </div>
+        <div class="card-note">Two-hit target combo. Cancel the 2nd hit into specials/supers. -6 on block 2nd hit — caution at close range.</div>
+      </div>
+
+      <div class="move-card cat-unique">
+        <div class="card-top">
+          <div><div class="card-name">MK, HK</div><div class="card-fullname">Bone Crusher Axe Kick</div></div>
+          <div class="card-badges"><span class="badge badge-overhead">Overhead (2nd)</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">7/20f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1300</div></div>
+          <div class="stat-box"><div class="stat-lbl">Hit (2nd)</div><div class="stat-val val-pos">+1</div></div>
+          <div class="stat-box"><div class="stat-lbl">Block (2nd)</div><div class="stat-val val-neg">-3</div></div>
+        </div>
+        <div class="card-note">Second hit is overhead — forces opponent to stand. Forces standing on crouchers on 1st hit. Mix-up TC.</div>
+      </div>
+
+      <div class="move-card cat-unique">
+        <div class="card-top">
+          <div><div class="card-name">f+HP, f+HP, HK</div><div class="card-fullname">Kikoku Combination</div></div>
+          <div class="card-badges"><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Hits</div><div class="stat-val val-neu">3</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">2100</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD (2nd)</div><div class="stat-val val-gold">+39</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD (3rd)</div><div class="stat-val val-gold">+35</div></div>
+        </div>
+        <div class="card-note">3-hit TC ending in knockdown. 2nd and 3rd hit both cause KD — good oki setup if you hit early.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SPECIALS -->
+  <section class="section" id="specials">
+    <div class="section-title">Gou Hadouken</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">Hadouken LP</div><div class="card-fullname">QCF + Light Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">16f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">700</div></div>
+          <div class="stat-box"><div class="stat-lbl">Recovery</div><div class="stat-val val-neu">46f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-4</div></div>
+        </div>
+        <div class="card-note">Slowest startup, slowest projectile. Least punishable on block (-4). Best for mid/far range fireball control.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">Hadouken MP</div><div class="card-fullname">QCF + Medium Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">14f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">700</div></div>
+          <div class="stat-box"><div class="stat-lbl">Recovery</div><div class="stat-val val-neu">47f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-6</div></div>
+        </div>
+        <div class="card-note">Balanced option. Main confirm cancel version. Use after cr.MK on hit. -6 on block — safe at range.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">Hadouken HP</div><div class="card-fullname">QCF + Heavy Punch</div></div>
+          <div class="card-badges"><span class="badge badge-high">High</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">12f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">700</div></div>
+          <div class="stat-box"><div class="stat-lbl">Recovery</div><div class="stat-val val-neu">46f</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-8</div></div>
+        </div>
+        <div class="card-note">Fastest, travels fullscreen quickly. More punishable on block (-8). Use to trade fireballs or anti-air at range.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">Hadouken OD</div><div class="card-fullname">QCF + PP</div></div>
+          <div class="card-badges"><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">12f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1000</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+55 min</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-pos">+2</div></div>
+        </div>
+        <div class="card-note"><strong>+2 on block, KD on hit.</strong> Juggle state. Fullscreen knockdown — oki from anywhere. Worth the Drive meter.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Gou Shoryuken (DP)</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">DP LP</div><div class="card-fullname">Forward, Down, DF + LP</div></div>
+          <div class="card-badges"><span class="badge badge-inv">Full Inv 1–14</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">5f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1100</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+38</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-23</div></div>
+        </div>
+        <div class="card-note">Best anti-air — 14f of invincibility. Full invincible reversal. -23 on block = massive punish for opponent. Reversal only.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">DP MP</div><div class="card-fullname">Forward, Down, DF + MP</div></div>
+          <div class="card-badges"><span class="badge badge-inv">AA Inv 1–9</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">6f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1300</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+32</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-30</div></div>
+        </div>
+        <div class="card-note">More damage than LP version but less invincibility. -30 on block — do not throw out carelessly.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">DP HP</div><div class="card-fullname">Forward, Down, DF + HP</div></div>
+          <div class="card-badges"><span class="badge badge-inv">AA Inv 1–9</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">7f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1500</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+30</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-36</div></div>
+        </div>
+        <div class="card-note">Highest damage meterless DP. -36 on block = death sentence. Anti-air / reversal use only.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">DP OD</div><div class="card-fullname">Forward, Down, DF + PP</div></div>
+          <div class="card-badges"><span class="badge badge-inv">Full Inv 1–8</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">6f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1700</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+14</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-39</div></div>
+        </div>
+        <div class="card-note">Fully invincible reversal. Best punish damage. -39 on block — extremely punishable if blocked. Save for certain reversals.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Tatsumaki Zanku-kyaku</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">Tatsu LK</div><div class="card-fullname">QCB + Light Kick</div></div>
+          <div class="card-badges"><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">12f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">600</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+33</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-13</div></div>
+        </div>
+        <div class="card-note">Whiffs on crouching opponents. Juggle state on hit. Limited range — mostly combo use.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">Tatsu MK</div><div class="card-fullname">QCB + Medium Kick</div></div>
+          <div class="card-badges"><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">11f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1000</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+41</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-13</div></div>
+        </div>
+        <div class="card-note">Whiffs on crouching opponents. Best KD advantage of the Tatsu versions (+41). 2-hit.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">Tatsu HK</div><div class="card-fullname">QCB + Heavy Kick</div></div>
+          <div class="card-badges"><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">7f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1600</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+34</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-59</div></div>
+        </div>
+        <div class="card-note"><strong>Hits crouching opponents.</strong> Fastest Tatsu (7f). 4-hit. Massive -59 on block — combo use only, never raw.</div>
+      </div>
+
+      <div class="move-card cat-special">
+        <div class="card-top">
+          <div><div class="card-name">Tatsu OD</div><div class="card-fullname">QCB + KK</div></div>
+          <div class="card-badges"><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">13f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1100</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+47</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-17</div></div>
+        </div>
+        <div class="card-note">Juggle state. Best KD advantage (+47) for oki setups. 5-hit. Whiffs on crouching opponents.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SUPERS -->
+  <section class="section" id="supers">
+    <div class="section-title">Super arts</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-super">
+        <div class="card-top">
+          <div><div class="card-name">L1 Messatsu</div><div class="card-fullname">Messatsu Gohado — QCFx2 + P</div></div>
+          <div class="card-badges"><span class="badge badge-inv">Strike Inv 1–9</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">10f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">2200</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+9</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-41</div></div>
+        </div>
+        <div class="card-note">Strike invincible. Breaks armor. Combo ender or reversal. Smallest KD advantage of the supers (+9).</div>
+      </div>
+
+      <div class="move-card cat-super">
+        <div class="card-top">
+          <div><div class="card-name">L2 Empyrean</div><div class="card-fullname">Empyrean's End — QCBx2 + P</div></div>
+          <div class="card-badges"><span class="badge badge-inv">Full Inv 1–9</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">9f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">2800</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+29~97</div></div>
+          <div class="stat-box"><div class="stat-lbl">On block</div><div class="stat-val val-neg">-35</div></div>
+        </div>
+        <div class="card-note">Fully invincible. Variable KD — up to +97 advantage in corner. Best oki super. Can anti-air.</div>
+      </div>
+
+      <div class="move-card cat-super">
+        <div class="card-top">
+          <div><div class="card-name">L3 Sip of Calamity</div><div class="card-fullname">QCFx2 + K</div></div>
+          <div class="card-badges"><span class="badge badge-inv">Full Inv 1–8</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">8f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">4000</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+18</div></div>
+          <div class="stat-box"><div class="stat-lbl">CA version</div><div class="stat-val val-gold">4500</div></div>
+        </div>
+        <div class="card-note">Fully invincible reversal. 4000 dmg (4500 CA). Use as combo ender or in clutch reversal situations.</div>
+      </div>
+
+      <div class="move-card cat-super">
+        <div class="card-top">
+          <div><div class="card-name">Raging Demon</div><div class="card-fullname">LP, LP, F, LK, HP</div></div>
+          <div class="card-badges"><span class="badge badge-inv">Full Inv 1–7</span><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">7f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">4700</div></div>
+          <div class="stat-box"><div class="stat-lbl">Req HP</div><div class="stat-val val-neg">≤25%</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+18</div></div>
+        </div>
+        <div class="card-note"><strong>Requires 25% HP or lower.</strong> Highest damage super (4700). Grabs before screen freeze — can't be jumped. Shortcut: LP, LP, F+LK+HP.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- THROWS -->
+  <section class="section" id="throws">
+    <div class="section-title">Throws</div>
+    <div class="card-grid">
+
+      <div class="move-card cat-throw">
+        <div class="card-top">
+          <div><div class="card-name">Forward Throw</div><div class="card-fullname">LP + LK (near opponent)</div></div>
+          <div class="card-badges"><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">5f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1200</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+28</div></div>
+          <div class="stat-box"><div class="stat-lbl">Whiff</div><div class="stat-val val-neg">-25</div></div>
+        </div>
+        <div class="card-note"><strong>Core oki starter.</strong> +28 KD — walk forward, land meaty cr.MK (8f startup, 3 active). Comfortable window. Never throw from outside range (-25 whiff).</div>
+      </div>
+
+      <div class="move-card cat-throw">
+        <div class="card-top">
+          <div><div class="card-name">Back Throw</div><div class="card-fullname">Back + LP + LK (near opponent)</div></div>
+          <div class="card-badges"><span class="badge badge-kd">Knockdown</span></div>
+        </div>
+        <div class="stats-strip">
+          <div class="stat-box"><div class="stat-lbl">Startup</div><div class="stat-val val-neu">5f</div></div>
+          <div class="stat-box"><div class="stat-lbl">Damage</div><div class="stat-val val-neu">1200</div></div>
+          <div class="stat-box"><div class="stat-lbl">KD adv</div><div class="stat-val val-gold">+14</div></div>
+          <div class="stat-box"><div class="stat-lbl">Whiff</div><div class="stat-val val-neg">-25</div></div>
+        </div>
+        <div class="card-note">Sends opponent full screen — smaller oki window (+14). Use when cornered to escape, not for oki. Prefer forward throw for pressure.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMBOS -->
+  <section class="section" id="combos">
+    <div class="section-title">No meter — meterless routes, highest damage first</div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">The Real Punish</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~2300 dmg</span>
+          <span class="combo-stat diff">Intermediate</span>
+          <span class="combo-stat">No meter</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.MP</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu HK</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> cr.MP is +6 on hit and Special-cancellable. Tatsu HK has 7f startup — the cancel window connects easily. Tatsu HK hits crouching opponents (most Tatsus don't) and deals 1600 raw damage. Total with scaling lands around 2300. KD+34 for oki. This is the real meterless punish route — much stronger than cr.MP xx Hadouken HP which only deals 700.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">TC Ender</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~2100 dmg</span>
+          <span class="combo-stat diff">Intermediate</span>
+          <span class="combo-stat">No meter</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">st.MP</span>
+        <span class="combo-arrow">TC</span>
+        <span class="combo-input">st.MP</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu HK</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> st.MP Target Combos into itself (Viscera Piercer). The 2nd hit of the TC is Special-cancellable — Tatsu HK (7f) connects cleanly. Tatsu HK hits crouchers and gives KD+34. Strong punish off any situation where you land st.MP close. The TC is guaranteed — no link timing required.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">Light Confirm → Oki</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~1600 dmg</span>
+          <span class="combo-stat diff">Beginner</span>
+          <span class="combo-stat">No meter</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.LP</span>
+        <span class="combo-arrow">→</span>
+        <span class="combo-input">cr.LP</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu MK</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> cr.LP +5 on hit links into second cr.LP (1f window). Cancel into Tatsu MK (11f startup). Tatsu MK gives KD+41 — the best meterless oki advantage you can get off lights. Note: Tatsu MK whiffs on crouchers at certain spacings, so confirm range matters. Your go-to light confirm if you want oki over raw damage.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">The Backbone</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~1200 dmg</span>
+          <span class="combo-stat diff">Beginner</span>
+          <span class="combo-stat">No meter</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.MK</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Hadouken MP</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> cr.MK +1 on hit, Special cancel into Hadouken MP (14f). This is your neutral game — not your highest damage option but your most accessible one. Safe at range, confirms your footsie poke into damage. The foundation everything else builds from.
+      </div>
+    </div>
+
+    <div class="section-title">Drive meter — DR and OD routes, highest damage first</div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">DR Punish Route</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~2900 dmg</span>
+          <span class="combo-stat diff">Intermediate</span>
+          <span class="combo-stat">1 bar DR</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.MK</span>
+        <span class="combo-arrow">DR</span>
+        <span class="combo-input">cr.MP</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu HK</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> cr.MK is only +1 on hit — normally cannot link into anything. Drive Rush cancel adds +4 frame advantage, making it effectively +5. cr.MP has 6f startup: 5-6 = -1 normally, but with DR it's +5-6 = a viable link. Then cr.MP xx Tatsu HK for the big ender. This is the textbook DR use — spending 1 bar to convert a poke you couldn't otherwise extend into a 2900 damage knockdown.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">OD Hadouken Oki</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~1500 dmg</span>
+          <span class="combo-stat diff">Beginner</span>
+          <span class="combo-stat">1 bar OD</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.MK</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Hadouken OD</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> OD Hadouken gives KD+55 and is +2 even on block. Lower damage than the DR route but simpler execution — no link required. The unique value is fullscreen knockdown. You can be at max range, land cr.MK, spend 1 bar, and still get oki. Use this when you need the knockdown more than you need the damage.
+      </div>
+    </div>
+
+    <div class="section-title">Super meter — super cancel routes, highest damage first</div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">The Nuke</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~5200 dmg</span>
+          <span class="combo-stat diff">Intermediate</span>
+          <span class="combo-stat">3 bars super</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.MP</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu HK</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">super cancel</span>
+        <span class="combo-input">L3 Sip</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> cr.MP xx Tatsu HK is your strongest normal → special route. Tatsu HK is Super-cancellable — input QCFx2+K during the Tatsu animation. L3 Sip (8f) connects in juggle state for the full 4000 hit. Total lands around 5200 with scaling. This is Gouki's highest accessible damage off a single normal confirm. Save L3 for when this will close out a round.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">Light Confirm Super</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~4500 dmg</span>
+          <span class="combo-stat diff">Intermediate</span>
+          <span class="combo-stat">3 bars super</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.LP</span>
+        <span class="combo-arrow">→</span>
+        <span class="combo-input">cr.LP</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu MK</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">super cancel</span>
+        <span class="combo-input">L3 Sip</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> cr.LP confirm into Tatsu MK, then super cancel into L3. Tatsu MK is Super-cancellable so input QCFx2+K during the spin. Slightly lower damage than The Nuke due to light scaling, but the confirm is off your safest opener (cr.LP is -1 on block). This is what you throw when you land the light confirm and see your opponent's HP is in range.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">Empyrean Punish</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~4200 dmg</span>
+          <span class="combo-stat diff">Intermediate</span>
+          <span class="combo-stat">2 bars super</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.MP</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu HK</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">super cancel</span>
+        <span class="combo-input">L2 Empyrean</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> Same route as The Nuke but using L2 instead of L3. L2 Empyrean gives KD+29~97 (corner gives massive oki). Saves a super bar while still dealing strong damage. Preferred over L3 when you're not in kill range but want the corner oki advantage. L2 is also fully invincible (1–9) so can be used as a reversal → combo.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">DR Max Punish</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~5800 dmg</span>
+          <span class="combo-stat diff">Advanced</span>
+          <span class="combo-stat">1 DR + 3 super</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">cr.MK</span>
+        <span class="combo-arrow">DR</span>
+        <span class="combo-input">cr.MP</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu HK</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">super cancel</span>
+        <span class="combo-input">L3 Sip</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why it works:</strong> The full resource dump. DR unlocks cr.MP after cr.MK (+4 advantage bridges the gap), then cr.MP xx Tatsu HK xx L3 Sip for maximum output. Around 5800 damage off a footsie poke. This is the combo you land when you see a punishable move at mid-range and have the meter ready. Requires tight DR timing — drill the cr.MK DR cr.MP link separately before adding the ender.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CANCEL ROUTES -->
+  <section class="section" id="cancels">
+
+    <div class="cancel-legend">
+      <div class="legend-item"><span class="ct-yes"></span> Can cancel</div>
+      <div class="legend-item"><span class="ct-no"></span> Cannot cancel</div>
+      <div class="legend-item"><span class="ct-cond"></span> Conditional / notes</div>
+      <div class="legend-item" style="margin-left:auto;font-size:10px;">
+        <span class="col-header-chain">Chain</span> &nbsp;·&nbsp;
+        <span class="col-header-special">Special</span> &nbsp;·&nbsp;
+        <span class="col-header-super">Super</span> &nbsp;·&nbsp;
+        <span class="col-header-tc">TC</span> &nbsp;·&nbsp;
+        <span class="col-header-dr">DR</span>
+      </div>
+    </div>
+
+    <div class="section-title">Standing normals — cancel routes</div>
+    <div class="cancel-table-wrap">
+      <table class="cancel-table">
+        <thead>
+          <tr>
+            <th>Move</th>
+            <th>Full name</th>
+            <th class="center col-header-chain">Chain</th>
+            <th class="center col-header-special">Special</th>
+            <th class="center col-header-super">Super</th>
+            <th class="center col-header-tc">Target Combo</th>
+            <th class="center col-header-dr">Drive Rush</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="move-col">st.LP</td>
+            <td class="name-col">Standing Light Punch</td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr>
+            <td class="move-col">st.MP</td>
+            <td class="name-col">Standing Medium Punch</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>st.MP TC:</strong> Cancels into st.MP again (Viscera Piercer). The 2nd hit also cancels into Special/Super.</td></tr>
+          <tr>
+            <td class="move-col">st.HP</td>
+            <td class="name-col">Standing Heavy Punch</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr>
+            <td class="move-col">st.LK</td>
+            <td class="name-col">Standing Light Kick</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr>
+            <td class="move-col">st.MK</td>
+            <td class="name-col">Standing Medium Kick</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>st.MK TC:</strong> Cancels into st.HK (Bone Crusher Axe Kick). 2nd hit is an overhead.</td></tr>
+          <tr>
+            <td class="move-col">st.HK</td>
+            <td class="name-col">Standing Heavy Kick</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>st.HK note:</strong> No cancels — commit to the full 2-hit animation. Second hit whiffs on crouching opponents.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">Crouching normals — cancel routes</div>
+    <div class="cancel-table-wrap">
+      <table class="cancel-table">
+        <thead>
+          <tr>
+            <th>Move</th>
+            <th>Full name</th>
+            <th class="center col-header-chain">Chain</th>
+            <th class="center col-header-special">Special</th>
+            <th class="center col-header-super">Super</th>
+            <th class="center col-header-tc">Target Combo</th>
+            <th class="center col-header-dr">Drive Rush</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="move-col">cr.LP ⭑</td>
+            <td class="name-col">Crouching Light Punch</td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>⭑ Core weapon.</strong> Chain into itself or cr.LK. Special cancel into Hadouken or Tatsu on hit. The backbone of your hit confirm.</td></tr>
+          <tr>
+            <td class="move-col">cr.MP</td>
+            <td class="name-col">Crouching Medium Punch</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr>
+            <td class="move-col">cr.HP</td>
+            <td class="name-col">Crouching Heavy Punch</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>cr.HP note:</strong> Anti-air inv 8–16. Cancel into DP for big anti-air damage, or Hadouken for space control.</td></tr>
+          <tr>
+            <td class="move-col">cr.LK</td>
+            <td class="name-col">Crouching Light Kick</td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>cr.LK note:</strong> Chain only — links into cr.LP to start a confirm. Cannot cancel directly into specials.</td></tr>
+          <tr>
+            <td class="move-col">cr.MK ⭑</td>
+            <td class="name-col">Crouching Medium Kick</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-cond"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>⭑ Core weapon.</strong> Special cancel into Hadouken (main route) or Tatsu. Drive Rush cancel window was patched 2f faster (Dec 2024). 20% damage scaling on followup hits. <strong>Cannot cancel into Hadouken OD on normal hit</strong> as of March 2026 patch.</td></tr>
+          <tr>
+            <td class="move-col">cr.HK</td>
+            <td class="name-col">Crouching Heavy Kick</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>cr.HK note:</strong> No cancels — sweep is a standalone move. Use for knockdown into oki, not as a combo piece.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">Unique attacks — cancel routes</div>
+    <div class="cancel-table-wrap">
+      <table class="cancel-table">
+        <thead>
+          <tr>
+            <th>Move</th>
+            <th>Full name</th>
+            <th class="center col-header-chain">Chain</th>
+            <th class="center col-header-special">Special</th>
+            <th class="center col-header-super">Super</th>
+            <th class="center col-header-tc">Target Combo</th>
+            <th class="center col-header-dr">Drive Rush</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="move-col">f+MP</td>
+            <td class="name-col">Skull Splitter (Overhead)</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>f+MP note:</strong> No cancels — the overhead is a standalone mix-up. The +3 on hit gives you time to walk up and start pressure or throw.</td></tr>
+          <tr>
+            <td class="move-col">f+MK</td>
+            <td class="name-col">Resso Snap Kick</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr>
+            <td class="move-col">b+HK</td>
+            <td class="name-col">Rago High Kick</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>b+HK note:</strong> Anti-air use only. No cancel — use the KD+47 for oki instead.</td></tr>
+          <tr>
+            <td class="move-col">f+HP</td>
+            <td class="name-col">Forward Heavy Punch</td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+            <td class="center"><span class="ct-yes"></span></td>
+            <td class="center"><span class="ct-no"></span></td>
+          </tr>
+          <tr class="cancel-note-row"><td colspan="7"><strong>f+HP TC:</strong> Cancels into f+HP again, then HK (Kikoku Combination). The TC sequence itself ends in knockdown (+39/+35).</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">What cancels INTO what — special moves</div>
+    <div class="cancel-table-wrap">
+      <table class="cancel-table">
+        <thead>
+          <tr>
+            <th>Special move</th>
+            <th>Cancelled from</th>
+            <th>Startup</th>
+            <th>Key condition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="move-col">Hadouken LP/MP/HP</td>
+            <td class="name-col">cr.LP, cr.MP, cr.HP, cr.MK, st.LP, st.MP, st.HP, st.LK, st.MK</td>
+            <td>12–16f</td>
+            <td>On hit only for cr.MK. Any of the above on hit or block.</td>
+          </tr>
+          <tr>
+            <td class="move-col">Hadouken OD</td>
+            <td class="name-col">cr.LP, cr.MP, cr.HP, st.LP, st.MP, st.HP, st.LK, st.MK</td>
+            <td>12f</td>
+            <td><strong>Not from cr.MK on normal hit</strong> (March 2026 patch). From cr.MP or lights only.</td>
+          </tr>
+          <tr>
+            <td class="move-col">DP (all versions)</td>
+            <td class="name-col">cr.LP, cr.MP, cr.HP, st.LP, st.MP, st.HP, st.LK, st.MK</td>
+            <td>5–7f</td>
+            <td>Combo use / punish confirm. Do not cancel into DP on block — massive punish risk.</td>
+          </tr>
+          <tr>
+            <td class="move-col">Tatsu LK / MK</td>
+            <td class="name-col">cr.LP, cr.MP, st.LP, st.MP, st.HP, st.LK, st.MK</td>
+            <td>11–12f</td>
+            <td>Whiffs on crouching opponents — confirm range matters. Best from close range.</td>
+          </tr>
+          <tr>
+            <td class="move-col">Tatsu HK</td>
+            <td class="name-col">st.MP (via TC), cr.LP, cr.MP</td>
+            <td>7f</td>
+            <td>Hits crouchers — most reliable Tatsu for combos. -59 on block, combo use only.</td>
+          </tr>
+          <tr>
+            <td class="move-col">L1 Messatsu</td>
+            <td class="name-col">cr.LP, cr.MP, cr.HP, cr.MK, st.LP, st.MP, st.HP, st.LK, st.MK</td>
+            <td>10f</td>
+            <td>Any Special-cancellable normal. Standard super confirm.</td>
+          </tr>
+          <tr>
+            <td class="move-col">L2 Empyrean</td>
+            <td class="name-col">cr.LP, cr.MP, cr.HP, cr.MK, st.LP, st.MP, st.HP, st.LK, st.MK</td>
+            <td>9f</td>
+            <td>Same cancel routes as L1. Better damage + oki (+97 corner). Preferred super ender.</td>
+          </tr>
+          <tr>
+            <td class="move-col">L3 Sip of Calamity</td>
+            <td class="name-col">cr.LP, cr.MP, cr.HP, cr.MK, st.LP, st.MP, st.HP, st.LK, st.MK</td>
+            <td>8f</td>
+            <td>Any Super-cancellable normal. 4000 dmg — save for combo finisher or clutch reversal.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <!-- LINKS -->
+  <section class="section" id="links">
+
+    <div class="link-intro">
+      <strong>How links work:</strong> A link is possible when
+      <span class="formula">Move A on-hit advantage ≥ Move B startup</span>.
+      The <strong>link window</strong> = advantage − startup. A 1-frame window means exact timing. 3f+ is comfortable. Unlike cancels, you must wait for the first move to fully complete before inputting the next.
+    </div>
+
+    <div class="links-legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--accent)"></div> 1-frame link — tight, requires precise timing</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--gold)"></div> 2-frame link — learnable with practice</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--green)"></div> 3f+ link — comfortable</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--blue)"></div> Easy — chain or large window</div>
+    </div>
+
+    <div class="section-title">From cr.LP (+5 on hit)</div>
+    <div class="link-grid">
+
+      <div class="link-card diff-1">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.LP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.LP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f1">1-frame</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.LP hit <span class="val pos">+5</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.LP startup <span class="val neu">4f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window tight">1f window</span>
+        </div>
+        <div class="link-note"><strong>Core confirm.</strong> The backbone of your hit confirm drill. Tight but very learnable — this is one of the standard SF6 beginner links. Chain cancel into cr.LP also works, making it easier in practice.</div>
+      </div>
+
+      <div class="link-card diff-1">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.LP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">st.LP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f1">1-frame</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.LP hit <span class="val pos">+5</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">st.LP startup <span class="val neu">4f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window tight">1f window</span>
+        </div>
+        <div class="link-note">Same math as cr.LP → cr.LP. Mix in st.LP to vary your confirm chain and open up standing cancel routes.</div>
+      </div>
+
+      <div class="link-card diff-1">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.LP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.LK</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge easy">Chain</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.LP hit <span class="val pos">+5</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.LK startup <span class="val neu">5f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window easy">0f (chain)</span>
+        </div>
+        <div class="link-note">Chain cancel — input cr.LK immediately without waiting. cr.LK is low hit which helps vs high-blocking opponents. Note: cr.LK cannot cancel into specials, so chain back to cr.LP to finish.</div>
+      </div>
+
+      <div class="link-card diff-2">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.LP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">st.LK</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f1">1-frame</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.LP hit <span class="val pos">+5</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">st.LK startup <span class="val neu">5f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window tight">0f (chain)</span>
+        </div>
+        <div class="link-note">Chain cancel into st.LK. st.LK has Special cancel — use to extend into Hadouken or Tatsu. Slightly riskier than cr.LP confirm due to st.LK being -4 on block.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">From cr.MP (+6 on hit)</div>
+    <div class="link-grid">
+
+      <div class="link-card diff-3">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.MP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.LP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f2">2-frame</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.MP hit <span class="val pos">+6</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.LP startup <span class="val neu">4f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window med">2f window</span>
+        </div>
+        <div class="link-note">Comfortable two-frame link. cr.MP gives you bigger range than a jab opener, then link into cr.LP to confirm into Hadouken or Tatsu. Good punish starter.</div>
+      </div>
+
+      <div class="link-card diff-3">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.MP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">st.LP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f2">2-frame</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.MP hit <span class="val pos">+6</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">st.LP startup <span class="val neu">4f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window med">2f window</span>
+        </div>
+        <div class="link-note">Same 2f window into st.LP. Use when you want the standing cancel route — st.LP can chain into specials and has slightly different cancel properties than cr.LP.</div>
+      </div>
+
+      <div class="link-card diff-3">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.MP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">st.MP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge easy">Easy</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.MP hit <span class="val pos">+6</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">st.MP startup <span class="val neu">6f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window easy">0f (chain)</span>
+        </div>
+        <div class="link-note">Chain into st.MP. Opens up the Viscera Piercer (TC) route for higher damage. st.MP is +1 on block — safe enough to use confidently in blockstrings too.</div>
+      </div>
+
+      <div class="link-card diff-3">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.MP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.MK</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge easy">Easy</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.MP hit <span class="val pos">+6</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.MK startup <span class="val neu">8f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window easy">easy link</span>
+        </div>
+        <div class="link-note">Large comfortable window into your main footsie tool. cr.MP → cr.MK xx Hadouken is a strong meterless punish combo. 20% scaling on cr.MK still applies.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">From st.MP (+4 on hit)</div>
+    <div class="link-grid">
+
+      <div class="link-card diff-1">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">st.MP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.LP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge easy">Chain</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">st.MP hit <span class="val pos">+4</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.LP startup <span class="val neu">4f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window easy">0f (chain)</span>
+        </div>
+        <div class="link-note">Chain link — no gap. st.MP is +1 on block so this pressure string is safe. Then confirm into specials off cr.LP. A solid mid-range blockstring that stays plus throughout.</div>
+      </div>
+
+      <div class="link-card diff-1">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">st.MP</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">st.MP</span>
+            <span class="link-arrow">(TC)</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge easy">Target Combo</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">TC input</span>
+          <span class="math-equals">→</span>
+          <span class="link-window easy">Viscera Piercer</span>
+        </div>
+        <div class="link-note">Target combo — guaranteed connection, not a true link. Press MP again during st.MP animation. 2nd hit cancels into Special/Super for combo extension.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">From cr.MK (+1 on hit)</div>
+    <div class="link-grid">
+
+      <div class="link-card diff-1">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.MK</span>
+            <span class="link-arrow">xx</span>
+            <span class="link-move-pill">Hadouken</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge easy">Cancel</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.MK hit <span class="val pos">+1</span></span>
+          <span class="math-equals">→</span>
+          <span class="link-window easy">Special cancel</span>
+        </div>
+        <div class="link-note"><strong>Core weapon.</strong> Cancel (not a link) — input QCF+P during the cr.MK animation before it fully recovers. +1 on hit is not enough to link into any normal, so cancel is your only route forward.</div>
+      </div>
+
+      <div class="link-card diff-1">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">cr.MK</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.LP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f1">Not possible</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">cr.MK hit <span class="val pos">+1</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.LP startup <span class="val neu">4f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window tight">-3f gap</span>
+        </div>
+        <div class="link-note"><strong>Does not link.</strong> cr.MK is only +1 on hit — not enough advantage to connect into any normal (fastest is 4f). Always cancel into a special from cr.MK, never try to link a normal after it.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">From f+MK (+5 on hit)</div>
+    <div class="link-grid">
+
+      <div class="link-card diff-1">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">f+MK</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.LP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f1">1-frame</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">f+MK hit <span class="val pos">+5</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.LP startup <span class="val neu">4f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window tight">1f window</span>
+        </div>
+        <div class="link-note">f+MK is a forward-advancing move (+5 on hit). Linking into cr.LP gives you a confirm route. Tight 1-frame — same difficulty as your core cr.LP confirm drill.</div>
+      </div>
+
+      <div class="link-card diff-3">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">f+MK</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">st.MP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge easy">Easy</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">f+MK hit <span class="val pos">+5</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">st.MP startup <span class="val neu">6f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window easy">easy link</span>
+        </div>
+        <div class="link-note">More forgiving than the cr.LP route. f+MK → st.MP opens the TC path (Viscera Piercer) for damage. Good when you land f+MK in neutral and want a clean confirm.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">From st.HK (+7 on hit)</div>
+    <div class="link-grid">
+
+      <div class="link-card diff-3">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">st.HK</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.LP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f3">3-frame</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">st.HK hit <span class="val pos">+7</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.LP startup <span class="val neu">4f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window easy">3f window</span>
+        </div>
+        <div class="link-note">Comfortable 3-frame link. st.HK is +3 on block too — when both hits land you get a generous window into cr.LP confirm. Note: 2nd hit of st.HK whiffs on crouchers so confirm carefully.</div>
+      </div>
+
+      <div class="link-card diff-3">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">st.HK</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">cr.MK</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge easy">Easy</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">st.HK hit <span class="val pos">+7</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">cr.MK startup <span class="val neu">8f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window easy">easy link</span>
+        </div>
+        <div class="link-note">Easy link into your main footsie tool. st.HK → cr.MK xx Hadouken is a clean damage route off a standing heavy confirm.</div>
+      </div>
+
+      <div class="link-card diff-3">
+        <div class="link-top">
+          <div class="link-moves">
+            <span class="link-move-pill highlight">st.HK</span>
+            <span class="link-arrow">→</span>
+            <span class="link-move-pill">st.MP</span>
+          </div>
+          <div class="link-difficulty">
+            <span class="diff-badge f1">1-frame</span>
+          </div>
+        </div>
+        <div class="link-math">
+          <span class="math-chip">st.HK hit <span class="val pos">+7</span></span>
+          <span class="math-equals">−</span>
+          <span class="math-chip">st.MP startup <span class="val neu">6f</span></span>
+          <span class="math-equals">=</span>
+          <span class="link-window tight">1f window</span>
+        </div>
+        <div class="link-note">Tight 1-frame but the TC payoff is high — st.HK → st.MP → st.MP (TC) → Tatsu HK is a strong meterless combo. Worth drilling once you're comfortable with the basics.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Quick reference — all valid links at a glance</div>
+    <div class="cancel-table-wrap">
+      <table class="cancel-table">
+        <thead>
+          <tr>
+            <th>Move A</th>
+            <th>Hit adv</th>
+            <th>→ Move B</th>
+            <th>Startup B</th>
+            <th>Window</th>
+            <th>Difficulty</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="move-col">cr.LP</td><td><span style="color:#5ab87a;font-weight:500">+5</span></td><td class="name-col">cr.LP / st.LP</td><td>4f</td><td>1f</td><td><span class="diff-badge f1" style="font-size:9px">Tight</span></td></tr>
+          <tr><td class="move-col">cr.LP</td><td><span style="color:#5ab87a;font-weight:500">+5</span></td><td class="name-col">cr.LK / st.LK</td><td>5f</td><td>Chain</td><td><span class="diff-badge easy" style="font-size:9px">Chain</span></td></tr>
+          <tr><td class="move-col">cr.MP</td><td><span style="color:#5ab87a;font-weight:500">+6</span></td><td class="name-col">cr.LP / st.LP</td><td>4f</td><td>2f</td><td><span class="diff-badge f2" style="font-size:9px">Medium</span></td></tr>
+          <tr><td class="move-col">cr.MP</td><td><span style="color:#5ab87a;font-weight:500">+6</span></td><td class="name-col">st.MP / cr.MK</td><td>6–8f</td><td>Easy</td><td><span class="diff-badge easy" style="font-size:9px">Easy</span></td></tr>
+          <tr><td class="move-col">st.MP</td><td><span style="color:#5ab87a;font-weight:500">+4</span></td><td class="name-col">cr.LP (chain)</td><td>4f</td><td>Chain</td><td><span class="diff-badge easy" style="font-size:9px">Chain</span></td></tr>
+          <tr><td class="move-col">f+MK</td><td><span style="color:#5ab87a;font-weight:500">+5</span></td><td class="name-col">cr.LP</td><td>4f</td><td>1f</td><td><span class="diff-badge f1" style="font-size:9px">Tight</span></td></tr>
+          <tr><td class="move-col">f+MK</td><td><span style="color:#5ab87a;font-weight:500">+5</span></td><td class="name-col">st.MP</td><td>6f</td><td>Easy</td><td><span class="diff-badge easy" style="font-size:9px">Easy</span></td></tr>
+          <tr><td class="move-col">st.HK</td><td><span style="color:#5ab87a;font-weight:500">+7</span></td><td class="name-col">cr.LP</td><td>4f</td><td>3f</td><td><span class="diff-badge f3" style="font-size:9px">Comfortable</span></td></tr>
+          <tr><td class="move-col">st.HK</td><td><span style="color:#5ab87a;font-weight:500">+7</span></td><td class="name-col">cr.MK</td><td>8f</td><td>Easy</td><td><span class="diff-badge easy" style="font-size:9px">Easy</span></td></tr>
+          <tr><td class="move-col">st.HK</td><td><span style="color:#5ab87a;font-weight:500">+7</span></td><td class="name-col">st.MP</td><td>6f</td><td>1f</td><td><span class="diff-badge f1" style="font-size:9px">Tight</span></td></tr>
+          <tr><td class="move-col">cr.MK</td><td><span style="color:#5ab87a;font-weight:500">+1</span></td><td class="name-col">any normal</td><td>4f+</td><td>None</td><td><span class="diff-badge f1" style="font-size:9px">Cancel only</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <!-- COMBO BUILDER -->
+  <section class="section" id="builder">
+    <div class="cb-layout">
+
+      <!-- LEFT: builder interface -->
+      <div>
+        <!-- opponent slot hook -->
+        <div class="cb-opponent-slot">[ opponent slot — v2 ] plug in character data here to enable punish validation</div>
+
+        <!-- situation selector -->
+        <div class="cb-panel" style="margin-bottom:12px">
+          <div class="cb-panel-title">Opening situation</div>
+          <div class="cb-situation">
+            <button class="sit-btn sit-normal active" onclick="setSituation('normal',this)">Normal Hit</button>
+            <button class="sit-btn sit-ch" onclick="setSituation('ch',this)">Counter Hit +2</button>
+            <button class="sit-btn sit-pc" onclick="setSituation('pc',this)">Punish Counter</button>
+          </div>
+          <div class="cb-hint" id="cb-sit-desc">Normal hit — standard frame data applies.</div>
+        </div>
+
+        <!-- sequence strip -->
+        <div class="cb-panel" style="margin-bottom:12px">
+          <div class="cb-panel-title">Combo sequence <span id="cb-hit-count" style="color:var(--muted)"></span></div>
+          <div class="cb-sequence" id="cb-sequence"><span class="cb-seq-empty">Pick a starter below</span></div>
+          <div class="cb-hint" id="cb-hint"></div>
+          <div class="cb-controls">
+            <button class="cb-btn" id="cb-dr-btn" onclick="cbInsertDR()" title="Drive Rush cancel — adds +4 advantage to last move, enabling new links">DR Cancel</button>
+            <button class="cb-btn primary" onclick="cbUndo()">← Undo</button>
+            <button class="cb-btn" onclick="cbReset()">Reset</button>
+          </div>
+        </div>
+
+        <!-- move picker -->
+        <div class="cb-panel">
+          <div class="cb-picker-title" id="cb-picker-label">Choose a starter</div>
+          <div id="cb-picker-normal" style="margin-bottom:10px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Normals</div>
+            <div class="cb-picker-grid" id="cb-normals-grid"></div>
+          </div>
+          <div id="cb-picker-special" style="margin-bottom:10px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Specials</div>
+            <div class="cb-picker-grid" id="cb-specials-grid"></div>
+          </div>
+          <div id="cb-picker-super">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Supers</div>
+            <div class="cb-picker-grid" id="cb-supers-grid"></div>
+          </div>
+          <!-- mobile move info panel — shown on first tap -->
+          <div id="cb-move-info" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px">
+              <div>
+                <span id="cb-info-name" style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;color:var(--text)"></span>
+                <span id="cb-info-conn" style="font-family:'IBM Plex Mono',monospace;font-size:10px;margin-left:8px;padding:2px 6px;border-radius:3px"></span>
+              </div>
+              <button onclick="cbDismissInfo()" style="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 10px;border-radius:3px;border:1px solid var(--border-strong);background:transparent;color:var(--muted);cursor:pointer">✕</button>
+            </div>
+            <div id="cb-info-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px"></div>
+            <div id="cb-info-note" style="font-family:'IBM Plex Sans',sans-serif;font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:10px"></div>
+            <button id="cb-info-add" onclick="cbConfirmInfoAdd()" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;padding:8px;border-radius:4px;border:1px solid var(--accent-border);background:var(--accent-dim);color:var(--accent);cursor:pointer">Add to combo →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: summary + save/load -->
+      <div>
+        <div class="cb-panel" style="margin-bottom:12px">
+          <div class="cb-panel-title">Summary</div>
+          <div class="cb-summary">
+            <div class="cb-stat-box"><div class="cb-stat-val" id="cb-total-dmg">—</div><div class="cb-stat-lbl">Damage</div></div>
+            <div class="cb-stat-box"><div class="cb-stat-val" id="cb-hits">—</div><div class="cb-stat-lbl">Hits</div></div>
+            <div class="cb-stat-box"><div class="cb-stat-val" id="cb-final-adv">—</div><div class="cb-stat-lbl">Final adv</div></div>
+            <div class="cb-stat-box"><div class="cb-stat-val" id="cb-scaling">100%</div><div class="cb-stat-lbl">Scaling</div></div>
+          </div>
+          <div class="cb-oki" id="cb-oki-verdict">Add moves to see oki potential.</div>
+        </div>
+
+        <!-- SAVE / LOAD -->
+        <div class="cb-panel" style="margin-bottom:12px">
+          <div class="cb-panel-title">Save combo</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px">
+            <input id="cb-save-name" type="text" placeholder="Name this combo..." style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border-strong);border-radius:4px;color:var(--text)">
+            <button class="cb-btn primary" onclick="cbSave()">Save</button>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="cb-btn" style="flex:1" onclick="cbCopyToClipboard()">Copy as text</button>
+            <button class="cb-btn" style="flex:1" onclick="cbExportJSON()">Export JSON</button>
+          </div>
+          <div id="cb-save-msg" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);margin-top:6px;min-height:14px"></div>
+        </div>
+
+        <div class="cb-panel" style="margin-bottom:12px">
+          <div class="cb-panel-title">Saved combos <span id="cb-saved-count" style="color:var(--muted)"></span></div>
+          <div id="cb-saved-list"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim)">No saved combos yet.</span></div>
+          <div style="margin-top:8px;display:flex;gap:6px">
+            <button class="cb-btn" style="flex:1" onclick="cbImportJSON()">Import JSON</button>
+            <button class="cb-btn" onclick="cbClearAll()" style="color:var(--accent)">Clear all</button>
+          </div>
+          <input type="file" id="cb-import-file" accept=".json" style="display:none" onchange="cbHandleImport(event)">
+        </div>
+
+        <div class="cb-panel">
+          <div class="cb-panel-title">Step-by-step log</div>
+          <div class="cb-log" id="cb-log"><span style="color:var(--dim)">No moves yet.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span class="footer-text">Source: ultimateframedata.com &nbsp;·&nbsp; March 2026 patch</span>
+  <span class="footer-text">Your 3 core weapons: cr.LP &nbsp;·&nbsp; cr.MK &nbsp;·&nbsp; Forward Throw</span>
+</footer>
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    if (id === 'builder') cbInit();
+  }
+
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light');
+    document.getElementById('theme-label').textContent = isLight ? 'Light' : 'Dark';
+  }
+
+  /* ═══════════════════════════════════════════════════
+     CHARACTER DATA MODEL
+     player  = Gouki (populated)
+     opponent = {} — v2 hook: populate with any character's
+                frame data to enable punish validation.
+     Move fields:
+       id, label, category ('normal'|'special'|'super'|'throw')
+       startup, onHit, onBlock, active, damage, hits
+       cancelFlags: { chain, special, super, tc, dr }
+       cancelIntoSuper: bool  — special can be super-cancelled
+       knockdown: bool, kdAdvantage: number
+       chBonus, pcBonus: frame advantage bonus on CH/PC
+       pcJuggle: bool — juggle state on PC
+       scaling: inherent damage scaling penalty (0–1)
+       group: string — picker group label
+       notes: string
+  ═══════════════════════════════════════════════════ */
+
+  const characterData = {
+    player: {
+      name: 'Gouki',
+      moves: [
+        /* ─ STANDING NORMALS ─ */
+        { id:'st_lp',  label:'st.LP',  fullname:'Standing LP',    category:'normal',  group:'Standing',  startup:4,  onHit:4,  onBlock:-1,  active:3,  damage:300,  hits:1, cancelFlags:{chain:true, special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Chain / Special / Super cancel.' },
+        { id:'st_mp',  label:'st.MP',  fullname:'Standing MP',    category:'normal',  group:'Standing',  startup:6,  onHit:4,  onBlock:1,   active:4,  damage:600,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:true, dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+1 on block. TC into second st.MP (Viscera Piercer).' },
+        { id:'st_hp',  label:'st.HP',  fullname:'Standing HP',    category:'normal',  group:'Standing',  startup:9,  onHit:3,  onBlock:-3,  active:5,  damage:800,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:6,  pcJuggle:false, scaling:0,   notes:'Special / Super cancel.' },
+        { id:'st_lk',  label:'st.LK',  fullname:'Standing LK',    category:'normal',  group:'Standing',  startup:5,  onHit:2,  onBlock:-4,  active:3,  damage:300,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Special / Super cancel.' },
+        { id:'st_mk',  label:'st.MK',  fullname:'Standing MK',    category:'normal',  group:'Standing',  startup:7,  onHit:3,  onBlock:-3,  active:5,  damage:700,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:true, dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Forces standing on crouchers. TC into st.HK.' },
+        { id:'st_hk',  label:'st.HK',  fullname:'Standing HK',    category:'normal',  group:'Standing',  startup:13, onHit:7,  onBlock:3,   active:3,  damage:800,  hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+3 on block. No cancel — 2nd hit whiffs on crouchers.' },
+        /* TC 2nd hits — virtual moves representing the cancellable 2nd hit of TCs */
+        { id:'st_mp2', label:'st.MP②', fullname:'Viscera Piercer 2nd hit', category:'normal', group:'TC 2nd', startup:7, onHit:-1, onBlock:-6, active:3, damage:700, hits:1, cancelFlags:{chain:false,special:true,super:true,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0, chBonus:2, pcBonus:4, pcJuggle:false, scaling:0, notes:'2nd hit of Viscera Piercer TC — Special/Super cancellable.' },
+        /* ─ CROUCHING NORMALS ─ */
+        { id:'cr_lp',  label:'cr.LP',  fullname:'Crouching LP',   category:'normal',  group:'Crouching', startup:4,  onHit:5,  onBlock:-1,  active:2,  damage:300,  hits:1, cancelFlags:{chain:true, special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Core weapon. Hit confirm starter.' },
+        { id:'cr_mp',  label:'cr.MP',  fullname:'Crouching MP',   category:'normal',  group:'Crouching', startup:6,  onHit:6,  onBlock:-1,  active:3,  damage:600,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+6 on hit. Strong punish starter.' },
+        { id:'cr_hp',  label:'cr.HP',  fullname:'Crouching HP',   category:'normal',  group:'Crouching', startup:8,  onHit:1,  onBlock:-8,  active:8,  damage:900,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:6,  pcJuggle:true,  scaling:0,   notes:'Anti-air inv 8–16. PC gives juggle state.' },
+        { id:'cr_lk',  label:'cr.LK',  fullname:'Crouching LK',   category:'normal',  group:'Crouching', startup:5,  onHit:3,  onBlock:-3,  active:2,  damage:200,  hits:1, cancelFlags:{chain:true, special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Low. Chain only — no special cancel.' },
+        { id:'cr_mk',  label:'cr.MK',  fullname:'Crouching MK',   category:'normal',  group:'Crouching', startup:8,  onHit:1,  onBlock:-6,  active:3,  damage:500,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:true},  cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0.2, notes:'Core weapon. 20% scaling. DR-cancellable.' },
+        { id:'cr_hk',  label:'cr.HK',  fullname:'Crouching HK',   category:'normal',  group:'Crouching', startup:9,  onHit:0,  onBlock:-12, active:3,  damage:900,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:40, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Sweep. KD+40.' },
+        /* ─ UNIQUE ─ */
+        { id:'f_mp',   label:'f+MP',   fullname:'Skull Splitter',  category:'normal',  group:'Unique',    startup:20, onHit:3,  onBlock:-1,  active:4,  damage:600,  hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Overhead.' },
+        { id:'f_mk',   label:'f+MK',   fullname:'Resso Snap Kick', category:'normal',  group:'Unique',    startup:10, onHit:5,  onBlock:-4,  active:3,  damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+5 on hit.' },
+        /* ─ THROWS ─ */
+        { id:'fwd_throw',label:'Throw', fullname:'Forward Throw',  category:'throw',   group:'Throws',    startup:5,  onHit:0,  onBlock:0,   active:3,  damage:1200, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:28, chBonus:0, pcBonus:0,  pcJuggle:false, scaling:0,   notes:'KD+28. Oki starter.' },
+        /* ─ SPECIALS ─ */
+        { id:'hadou_lp', label:'Hadouken LP', fullname:'Gou Hadouken LP', category:'special', group:'Hadouken', startup:16, onHit:0, onBlock:-4,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Fullscreen.' },
+        { id:'hadou_mp', label:'Hadouken MP', fullname:'Gou Hadouken MP', category:'special', group:'Hadouken', startup:14, onHit:0, onBlock:-6,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Main cancel target.' },
+        { id:'hadou_hp', label:'Hadouken HP', fullname:'Gou Hadouken HP', category:'special', group:'Hadouken', startup:12, onHit:0, onBlock:-8,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Fastest Hadouken.' },
+        { id:'hadou_od', label:'Hadouken OD', fullname:'Gou Hadouken OD', category:'special', group:'Hadouken', startup:12, onHit:0, onBlock:2,   active:0, damage:1000, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:55, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'+2 on block. KD+55 on hit.' },
+        { id:'dp_lp',   label:'DP LP',   fullname:'Gou Shoryuken LP',  category:'special', group:'DP',      startup:5,  onHit:0, onBlock:-23, active:10, damage:1100, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:38, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'AA inv 1–14. KD+38. Super-cancellable.' },
+        { id:'dp_mp',   label:'DP MP',   fullname:'Gou Shoryuken MP',  category:'special', group:'DP',      startup:6,  onHit:0, onBlock:-30, active:10, damage:1300, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:32, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+32. Super-cancellable.' },
+        { id:'dp_hp',   label:'DP HP',   fullname:'Gou Shoryuken HP',  category:'special', group:'DP',      startup:7,  onHit:0, onBlock:-36, active:11, damage:1500, hits:3, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:30, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+30. Super-cancellable.' },
+        { id:'tatsu_lk',label:'Tatsu LK',fullname:'Tatsumaki LK',      category:'special', group:'Tatsu',   startup:12, onHit:0, onBlock:-13, active:2,  damage:600,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:33, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Whiffs on crouchers. KD+33. Super-cancellable.' },
+        { id:'tatsu_mk',label:'Tatsu MK',fullname:'Tatsumaki MK',      category:'special', group:'Tatsu',   startup:11, onHit:0, onBlock:-13, active:5,  damage:1000, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:41, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+41 best meterless oki. Super-cancellable.' },
+        { id:'tatsu_hk',label:'Tatsu HK',fullname:'Tatsumaki HK',      category:'special', group:'Tatsu',   startup:7,  onHit:0, onBlock:-59, active:12, damage:1600, hits:4, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:34, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Hits crouchers. -59 block. Super-cancellable.' },
+        /* ─ SUPERS ─ */
+        { id:'super_l1',label:'L1 Messatsu', fullname:'Messatsu Gohado',  category:'super', group:'Super', startup:10, onHit:0, onBlock:-41, active:0, damage:2200, hits:3, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:9,  chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Strike inv 1–9.' },
+        { id:'super_l2',label:'L2 Empyrean', fullname:"Empyrean's End",   category:'super', group:'Super', startup:9,  onHit:0, onBlock:-35, active:3, damage:2800, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:63, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Full inv 1–9. KD up to +97 corner.' },
+        { id:'super_l3',label:'L3 Sip',      fullname:'Sip of Calamity',  category:'super', group:'Super', startup:8,  onHit:0, onBlock:-41, active:4, damage:4000, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:18, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Full inv 1–8. 4000 dmg.' },
+      ]
+    },
+    opponent: {
+      /* v2 hook — populate with opponent character data to enable:
+         - punish window validation (recovery frames)
+         - punish counter moves (PC on whiff/block)
+         - character-specific juggle rules
+         Example:
+         name: 'Ryu',
+         moves: [{ id:'ryu_hadouken', label:'Hadouken', blockRecovery:30, ... }]
+      */
+    }
+  };
+
+  /* ═══ SCALING ═══════════════════════════════════════ */
+  function getDamageScaling(hitIndex, inherentScaling) {
+    const base = [1.0, 1.0, 0.80, 0.70, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10];
+    const s = base[Math.min(hitIndex, base.length - 1)];
+    return Math.max(0.10, s - (inherentScaling || 0));
+  }
+
+  /* ═══ STATE ══════════════════════════════════════════ */
+  const SITUATION_DESCS = {
+    normal: 'Normal hit — standard frame data applies.',
+    ch:     'Counter Hit — first move gets +2 frame advantage.',
+    pc:     'Punish Counter — first move gets increased advantage. Some moves gain juggle state.'
+  };
+
+  // Each sequence entry:
+  // { type: 'move'|'dr', move?, connectionType?, drBonus?, scaledDmg?, runningScaling?, advAfter? }
+  let cbState = {
+    situation: 'normal',
+    sequence:  [],
+    totalDmg:  0,
+    hitCount:  0,
+    lastAdvantage: null,
+    drPending: false,  // a DR has been inserted, not yet consumed
+    initialized: false
+  };
+
+  /* ═══ SITUATION ══════════════════════════════════════ */
+  function setSituation(sit, btn) {
+    cbState.situation = sit;
+    document.querySelectorAll('.sit-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('cb-sit-desc').textContent = SITUATION_DESCS[sit];
+    cbRebuildAll();
+  }
+
+  /* ═══ ADVANTAGE CALCULATION ══════════════════════════ */
+  function getEffectiveAdvantage(moveEntry) {
+    // moveEntry is a sequence entry of type 'move'
+    // advAfter is already computed at insertion time
+    return moveEntry.advAfter;
+  }
+
+  function computeAdvAfter(move, isFirst, situation, drConsumed) {
+    if (move.knockdown) return move.kdAdvantage;
+    let adv = move.onHit;
+    if (isFirst) {
+      if (situation === 'ch') adv += (move.chBonus || 2);
+      if (situation === 'pc') adv += (move.pcBonus || 4);
+    }
+    if (drConsumed) adv += 4;
+    return adv;
+  }
+
+  /* ═══ CONNECTION TYPE ════════════════════════════════ */
+  function getConnectionType(prevMoveEntry, nextMove, drPending) {
+    if (!prevMoveEntry) return 'starter';
+
+    const prevMove = prevMoveEntry.move;
+    const prevAdv  = prevMoveEntry.advAfter + (drPending ? 4 : 0);
+
+    // Super cancel from special
+    if (nextMove.category === 'super' && prevMove.cancelIntoSuper) return 'cancel';
+    // Normal → special cancel
+    if (nextMove.category === 'special' && prevMove.cancelFlags.special) return 'cancel';
+    // Normal → super cancel
+    if (nextMove.category === 'super'   && prevMove.cancelFlags.super)   return 'cancel';
+    // Chain
+    if (prevMove.cancelFlags.chain && nextMove.category === 'normal') return 'chain';
+    // Link
+    if (prevAdv >= nextMove.startup) return 'link';
+    return 'invalid';
+  }
+
+  /* ═══ ADD MOVE ═══════════════════════════════════════ */
+  function cbAddMove(moveId) {
+    const move = characterData.player.moves.find(m => m.id === moveId);
+    if (!move) return;
+
+    const prevMoveEntries = cbState.sequence.filter(e => e.type === 'move');
+    const prevMoveEntry   = prevMoveEntries[prevMoveEntries.length - 1] || null;
+    const isFirst         = prevMoveEntries.length === 0;
+    const connType        = getConnectionType(prevMoveEntry, move, cbState.drPending);
+    if (connType === 'invalid') return;
+
+    // damage scaling
+    const sc        = getDamageScaling(cbState.hitCount, move.scaling);
+    const scaledDmg = Math.round(move.damage * sc);
+    cbState.totalDmg  += scaledDmg;
+    cbState.hitCount  += move.hits;
+
+    const drConsumed = cbState.drPending && (connType === 'link' || connType === 'chain');
+    const advAfter   = computeAdvAfter(move, isFirst, cbState.situation, drConsumed);
+
+    const entry = { type:'move', move, connectionType:connType, scaledDmg, runningScaling:sc, advAfter, drConsumed };
+    cbState.sequence.push(entry);
+    cbState.lastAdvantage = advAfter;
+
+    // consume DR if it was pending and used
+    if (drConsumed) cbState.drPending = false;
+
+    cbRebuildAll();
+  }
+
+  /* ═══ INSERT DR ══════════════════════════════════════ */
+  function cbInsertDR() {
+    if (!cbState.sequence.length) return;
+    const lastMoveEntries = cbState.sequence.filter(e => e.type === 'move');
+    if (!lastMoveEntries.length) return;
+    const lastMove = lastMoveEntries[lastMoveEntries.length - 1].move;
+    // only DR-cancellable moves or any normal in blockstring
+    if (cbState.drPending) return; // already pending
+    cbState.drPending = true;
+    cbState.sequence.push({ type: 'dr' });
+    cbRebuildAll();
+  }
+
+  /* ═══ UNDO ═══════════════════════════════════════════ */
+  function cbUndo() {
+    if (!cbState.sequence.length) return;
+    const last = cbState.sequence[cbState.sequence.length - 1];
+    cbState.sequence.pop();
+    if (last.type === 'dr') {
+      cbState.drPending = false;
+    } else {
+      cbState.totalDmg  -= last.scaledDmg;
+      cbState.hitCount  -= last.move.hits;
+      if (last.drConsumed) cbState.drPending = true; // restore DR if it was consumed
+      const prev = cbState.sequence.filter(e => e.type === 'move');
+      cbState.lastAdvantage = prev.length ? prev[prev.length-1].advAfter : null;
+    }
+    cbRebuildAll();
+  }
+
+  function cbRemoveAt(idx) {
+    // Remove from idx onward
+    const removed = cbState.sequence.splice(idx);
+    removed.forEach(e => {
+      if (e.type === 'move') {
+        cbState.totalDmg -= e.scaledDmg;
+        cbState.hitCount -= e.move.hits;
+      }
+      if (e.type === 'dr') cbState.drPending = false;
+    });
+    // recalculate drPending from remaining sequence
+    cbState.drPending = cbState.sequence.some(e => e.type === 'dr' && !cbState.sequence.slice(cbState.sequence.indexOf(e)+1).some(f => f.type==='move' && f.drConsumed));
+    const prev = cbState.sequence.filter(e => e.type === 'move');
+    cbState.lastAdvantage = prev.length ? prev[prev.length-1].advAfter : null;
+    cbRebuildAll();
+  }
+
+  /* ═══ RESET ══════════════════════════════════════════ */
+  function cbReset() {
+    cbState.sequence = []; cbState.totalDmg = 0; cbState.hitCount = 0;
+    cbState.lastAdvantage = null; cbState.drPending = false;
+    cbRebuildAll();
+  }
+
+  function cbRebuildAll() {
+    cbRenderSequence();
+    cbRebuildPicker();
+    cbRenderSummary();
+    cbRenderLog();
+    cbUpdateDRButton();
+    // dismiss info panel after a move is added
+    if (cbPendingMoveId === null) {
+      const panel = document.getElementById('cb-move-info');
+      if (panel) panel.style.display = 'none';
+    }
+  }
+
+  function cbUpdateDRButton() {
+    const btn = document.getElementById('cb-dr-btn');
+    if (!btn) return;
+    const hasMoves = cbState.sequence.filter(e => e.type === 'move').length > 0;
+    const lastMoveEntry = cbState.sequence.filter(e => e.type === 'move').slice(-1)[0];
+    const lastEnded = lastMoveEntry && lastMoveEntry.move.knockdown;
+    const lastIsSpecialOrSuper = lastMoveEntry && (lastMoveEntry.move.category === 'special' || lastMoveEntry.move.category === 'super');
+    const disabled = !hasMoves || cbState.drPending || lastEnded || lastIsSpecialOrSuper;
+    btn.disabled = disabled;
+    btn.style.opacity = disabled ? '0.35' : '';
+    btn.style.borderColor = cbState.drPending ? 'var(--green-border)' : '';
+    btn.style.color = cbState.drPending ? 'var(--green)' : '';
+    btn.textContent = cbState.drPending ? 'DR ✓ pending' : 'DR Cancel';
+  }
+
+  /* ═══ RENDER SEQUENCE ════════════════════════════════ */
+  function cbRenderSequence() {
+    const el = document.getElementById('cb-sequence');
+    const hc = document.getElementById('cb-hit-count');
+    hc.textContent = cbState.hitCount ? `(${cbState.hitCount} hit${cbState.hitCount>1?'s':''})` : '';
+
+    if (!cbState.sequence.length) {
+      el.innerHTML = '<span class="cb-seq-empty">Pick a starter below</span>';
+      document.getElementById('cb-hint').textContent = '';
+      return;
+    }
+
+    let html = '';
+    cbState.sequence.forEach((entry, i) => {
+      if (entry.type === 'dr') {
+        html += `<span class="cb-seq-connector conn-link" title="Drive Rush cancel — +4 adv to next link" onclick="cbRemoveAt(${i})" style="cursor:pointer;padding:3px 8px">DR</span>`;
+        return;
+      }
+      // find previous move entry for connector
+      const prevMoveEntries = cbState.sequence.slice(0, i).filter(e => e.type === 'move');
+      const isFirst = prevMoveEntries.length === 0;
+
+      if (!isFirst) {
+        const cls = entry.connectionType === 'cancel' ? 'conn-cancel'
+                  : entry.connectionType === 'link'   ? 'conn-link'
+                  : entry.connectionType === 'chain'  ? 'conn-chain' : 'conn-invalid';
+        const lbl = entry.connectionType === 'cancel' ? 'xx' : entry.connectionType === 'chain' ? '~' : '→';
+        html += `<span class="cb-seq-connector ${cls}">${lbl}</span>`;
+      }
+      html += `<div class="cb-seq-move">
+        <span class="cb-seq-pill" title="Click to remove from here" onclick="cbRemoveAt(${i})">${entry.move.label}</span>
+      </div>`;
+    });
+    el.innerHTML = html;
+
+    // hint from last move
+    const lastMoves = cbState.sequence.filter(e => e.type === 'move');
+    const last = lastMoves[lastMoves.length - 1];
+    const hint = document.getElementById('cb-hint');
+    if (!last) { hint.textContent = ''; return; }
+
+    if (last.move.knockdown) {
+      hint.innerHTML = `<span class="link-ok">Knockdown — KD+${last.move.kdAdvantage}. Oki available. Combo complete.</span>`;
+    } else if (last.move.category === 'super') {
+      hint.innerHTML = `<span class="link-ok">Super landed — combo complete.</span>`;
+    } else {
+      const adv = last.advAfter + (cbState.drPending ? 4 : 0);
+      const cls = adv >= 4 ? 'link-ok' : adv >= 0 ? 'chain-ok' : 'invalid';
+      hint.innerHTML = `<span class="${cls}">Advantage: ${adv >= 0 ? '+' : ''}${adv}${cbState.drPending ? ' (+4 DR pending)' : ''} — ${
+        adv >= 4 ? 'comfortable link window' :
+        adv >= 2 ? 'tight link possible' :
+        adv >= 0 ? 'neutral/plus — cancel or end' :
+        'minus — unsafe if blocked here'
+      }</span>`;
+    }
+  }
+
+  /* ═══ RENDER PICKER ══════════════════════════════════ */
+  function cbRebuildPicker() {
+    const prevMoveEntries = cbState.sequence.filter(e => e.type === 'move');
+    const prevMoveEntry   = prevMoveEntries[prevMoveEntries.length - 1] || null;
+    const lastEnded       = prevMoveEntry && (prevMoveEntry.move.knockdown || prevMoveEntry.move.category === 'super');
+    const label           = document.getElementById('cb-picker-label');
+
+    if (lastEnded) {
+      label.textContent = 'Combo complete — reset to start a new one';
+      ['cb-normals-grid','cb-specials-grid','cb-supers-grid'].forEach(id => {
+        document.getElementById(id).innerHTML = '';
+      });
+      return;
+    }
+    label.textContent = prevMoveEntry ? 'Next move — valid options highlighted' : 'Choose a starter';
+
+    const groups = { normal: {}, special: {}, super: {} };
+    characterData.player.moves.forEach(m => {
+      const cat = m.category === 'throw' ? 'normal'
+                : m.category === 'super'   ? 'super'
+                : m.category === 'special' ? 'special' : 'normal';
+      if (!groups[cat][m.group]) groups[cat][m.group] = [];
+      groups[cat][m.group].push(m);
+    });
+
+    renderPickerGroup('cb-normals-grid',  groups.normal,  prevMoveEntry);
+    renderPickerGroup('cb-specials-grid', groups.special, prevMoveEntry);
+    renderPickerGroup('cb-supers-grid',   groups.super,   prevMoveEntry);
+  }
+
+  function renderPickerGroup(gridId, groupMap, prevMoveEntry) {
+    const grid = document.getElementById(gridId);
+    let html = '';
+    Object.entries(groupMap).forEach(([grp, moves]) => {
+      moves.forEach(m => {
+        const conn = getConnectionType(prevMoveEntry, m, cbState.drPending);
+        let cls = '', disabled = '', connLabel = '', windowStr = '';
+        if (!prevMoveEntry) {
+          cls = 'starter'; connLabel = 'starter';
+        } else if (conn === 'chain') {
+          cls = 'valid valid-chain'; connLabel = 'chain';
+        } else if (conn === 'cancel') {
+          const isSuperCancel = prevMoveEntry.move.cancelIntoSuper && m.category === 'super';
+          cls = 'valid valid-cancel'; connLabel = isSuperCancel ? 'super cancel' : 'cancel';
+        } else if (conn === 'link') {
+          const prevAdv = prevMoveEntry.advAfter + (cbState.drPending ? 4 : 0);
+          const win = prevAdv - m.startup;
+          cls = 'valid valid-link'; connLabel = 'link'; windowStr = win + 'f window' + (cbState.drPending ? ' (DR +4)' : '');
+        } else {
+          disabled = 'disabled'; connLabel = 'no connection';
+        }
+        html += `<button class="cb-pick-btn ${cls}" ${disabled}
+          data-move-id="${m.id}" data-conn="${connLabel}" data-window="${windowStr}"
+          onclick="cbPickerTap('${m.id}',this)">${m.label}</button>`;
+      });
+    });
+    grid.innerHTML = html || '<span style="font-family:var(--font-mono);font-size:10px;color:var(--dim)">None</span>';
+  }
+
+  /* ═══ TOUCH-AWARE PICKER ════════════════════════════ */
+  let cbPendingMoveId = null;
+  const isMobile = () => window.innerWidth <= 768;
+
+  function cbPickerTap(moveId, btn) {
+    if (btn.disabled) return;
+    if (!isMobile()) {
+      cbAddMove(moveId);
+      return;
+    }
+    if (cbPendingMoveId === moveId) {
+      cbAddMove(moveId);
+      cbDismissInfo();
+      return;
+    }
+    cbPendingMoveId = moveId;
+    document.querySelectorAll('.cb-pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    cbShowMoveInfo(moveId, btn.dataset.conn, btn.dataset.window);
+  }
+
+  function cbShowMoveInfo(moveId, connLabel, windowStr) {
+    const move = characterData.player.moves.find(m => m.id === moveId);
+    if (!move) return;
+    document.getElementById('cb-info-name').textContent = move.label;
+    const connEl = document.getElementById('cb-info-conn');
+    connEl.textContent = windowStr ? connLabel + ' · ' + windowStr : connLabel;
+    const connColors = {
+      'chain':        ['var(--gold-dim)',    'var(--gold)',   'var(--gold-border)'],
+      'cancel':       ['var(--blue-dim)',    '#5a9fd4',       'var(--blue-border)'],
+      'super cancel': ['var(--blue-dim)',    '#5a9fd4',       'var(--blue-border)'],
+      'link':         ['var(--green-dim)',   'var(--green)',  'var(--green-border)'],
+      'starter':      ['var(--surface2)',    'var(--muted)',  'var(--border-strong)'],
+      'no connection':['var(--accent-dim)',  'var(--accent)', 'var(--accent-border)'],
+    };
+    const [bg, color, border] = connColors[connLabel] || connColors['starter'];
+    connEl.style.cssText = `background:${bg};color:${color};border:1px solid ${border};font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 6px;border-radius:3px`;
+    const stats = [
+      { lbl:'Startup', val: move.startup+'f',   cls:'val-neu' },
+      { lbl:'On hit',  val: move.knockdown ? 'KD+'+move.kdAdvantage : (move.onHit>=0?'+':'')+move.onHit, cls: move.knockdown||move.onHit>0?'val-pos':move.onHit<0?'val-neg':'val-neu' },
+      { lbl:'On block',val: (move.onBlock>=0?'+':'')+move.onBlock, cls: move.onBlock>0?'val-pos':move.onBlock<-3?'val-neg':'val-neu' },
+      { lbl:'Damage',  val: move.damage, cls:'val-neu' },
+    ];
+    document.getElementById('cb-info-stats').innerHTML = stats.map(s =>
+      `<div style="background:var(--surface2);border-radius:4px;padding:6px 8px;text-align:center">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">${s.lbl}</div>
+        <div class="stat-val ${s.cls}" style="font-size:16px">${s.val}</div>
+      </div>`).join('');
+    document.getElementById('cb-info-note').textContent = move.notes || '';
+    const addBtn = document.getElementById('cb-info-add');
+    const isInvalid = connLabel === 'no connection';
+    addBtn.disabled = isInvalid;
+    addBtn.style.opacity = isInvalid ? '0.35' : '1';
+    addBtn.textContent = isInvalid ? 'Cannot add — no valid connection' : 'Add ' + move.label + ' →';
+    const panel = document.getElementById('cb-move-info');
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function cbConfirmInfoAdd() {
+    if (cbPendingMoveId) { cbAddMove(cbPendingMoveId); cbDismissInfo(); }
+  }
+
+  function cbDismissInfo() {
+    cbPendingMoveId = null;
+    document.querySelectorAll('.cb-pick-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('cb-move-info').style.display = 'none';
+  }
+
+  /* ═══ RENDER SUMMARY ═════════════════════════════════ */
+  function cbRenderSummary() {
+    const dmgEl = document.getElementById('cb-total-dmg');
+    const hitsEl = document.getElementById('cb-hits');
+    const advEl  = document.getElementById('cb-final-adv');
+    const scEl   = document.getElementById('cb-scaling');
+    const okiEl  = document.getElementById('cb-oki-verdict');
+
+    const moveEntries = cbState.sequence.filter(e => e.type === 'move');
+
+    if (!moveEntries.length) {
+      dmgEl.textContent = '—'; dmgEl.className = 'cb-stat-val';
+      hitsEl.textContent = '—';
+      advEl.textContent = '—'; advEl.className = 'cb-stat-val';
+      scEl.textContent = '100%';
+      okiEl.className = 'cb-oki';
+      okiEl.innerHTML = 'Add moves to see oki potential.';
+      return;
+    }
+
+    const last = moveEntries[moveEntries.length - 1];
+    const sc   = Math.round(last.runningScaling * 100);
+    dmgEl.textContent = cbState.totalDmg;
+    dmgEl.className   = 'cb-stat-val' + (cbState.totalDmg >= 3500 ? ' good' : cbState.totalDmg >= 2000 ? ' warn' : '');
+    hitsEl.textContent = cbState.hitCount;
+    scEl.textContent   = sc + '%';
+
+    if (last.move.knockdown) {
+      const kd = last.move.kdAdvantage;
+      advEl.textContent = 'KD+' + kd; advEl.className = 'cb-stat-val good';
+      okiEl.className = 'cb-oki has-kd';
+      okiEl.innerHTML = `<strong>Knockdown — KD+${kd}</strong><br>` + (
+        kd >= 40 ? 'Wide oki window. Walk forward, land meaty cr.MK (8f startup, 3 active).' :
+        kd >= 28 ? 'Comfortable oki. Meaty cr.MK is your go-to.' :
+        kd >= 14 ? 'Tight window. Meaty cr.LP recommended (4f startup).' :
+        'Very tight. Immediate meaty only.'
+      );
+    } else if (last.move.category === 'super') {
+      advEl.textContent = 'End'; advEl.className = 'cb-stat-val good';
+      okiEl.className = 'cb-oki';
+      okiEl.innerHTML = '<strong>Super ender.</strong> Combo complete.';
+    } else {
+      const adv = last.advAfter;
+      advEl.textContent = (adv >= 0 ? '+' : '') + adv;
+      advEl.className   = 'cb-stat-val' + (adv >= 2 ? ' good' : adv >= 0 ? ' warn' : ' bad');
+      okiEl.className   = 'cb-oki';
+      okiEl.innerHTML   = adv <= -4
+        ? '<strong>Danger.</strong> Minus on hit — extend with a cancel or you\'re unsafe.'
+        : adv >= 0
+        ? '<strong>Plus.</strong> You can pressure, throw, or return to neutral.'
+        : '<strong>Slightly minus.</strong> Respect their options.';
+    }
+  }
+
+  /* ═══ RENDER LOG ══════════════════════════════════════ */
+  function cbRenderLog() {
+    const el = document.getElementById('cb-log');
+    const moveEntries = cbState.sequence.filter(e => e.type === 'move');
+    if (!moveEntries.length) {
+      el.innerHTML = '<span style="color:var(--dim)">No moves yet.</span>';
+      return;
+    }
+    let html = '';
+    moveEntries.forEach((entry, i) => {
+      const connLbl = i === 0 ? 'start'
+                    : entry.connectionType === 'cancel' ? 'xx'
+                    : entry.connectionType === 'chain'  ? 'chain'
+                    : entry.drConsumed ? 'DR→link' : 'link';
+      const connCls = i === 0 ? '' : entry.connectionType === 'cancel' ? 'conn-cancel' : entry.drConsumed ? 'conn-link' : 'conn-chain';
+      const advStr  = entry.move.knockdown ? `KD+${entry.move.kdAdvantage}`
+                    : entry.move.category === 'super' ? 'end'
+                    : (entry.advAfter >= 0 ? '+' : '') + entry.advAfter;
+      const advCls  = entry.move.knockdown || entry.move.category === 'super' ? 'link-ok' : entry.advAfter >= 0 ? 'chain-ok' : 'invalid';
+      html += `<div class="cb-log-row">
+        <span class="cb-log-move">${entry.move.label}${entry.drConsumed ? ' <span style="font-size:9px;color:var(--green)">[DR]</span>' : ''}</span>
+        <span class="cb-seq-connector ${connCls}" style="font-size:9px;padding:1px 5px">${connLbl}</span>
+        <span class="cb-log-dmg">${entry.scaledDmg}</span>
+        <span class="cb-log-adv ${advCls}">${advStr}</span>
+      </div>`;
+    });
+    html += `<div class="cb-log-row" style="border-top:1px solid var(--border-strong);margin-top:4px">
+      <span style="color:var(--muted)">Total</span><span></span>
+      <span class="cb-log-dmg" style="color:var(--text);font-weight:500">${cbState.totalDmg}</span><span></span>
+    </div>`;
+    el.innerHTML = html;
+  }
+
+  /* ═══ SAVE / LOAD ════════════════════════════════════ */
+  function cbGetSavedCombos() {
+    try { return JSON.parse(localStorage.getItem('gouki_combos') || '[]'); }
+    catch { return []; }
+  }
+
+  function cbPersist(combos) {
+    try { localStorage.setItem('gouki_combos', JSON.stringify(combos)); } catch {}
+  }
+
+  function cbSave() {
+    const name = document.getElementById('cb-save-name').value.trim();
+    const moveEntries = cbState.sequence.filter(e => e.type === 'move');
+    if (!name || !moveEntries.length) {
+      cbShowMsg('Name your combo and build at least one move first.', true);
+      return;
+    }
+    const combos = cbGetSavedCombos();
+    const record = {
+      id: Date.now(),
+      name,
+      situation: cbState.situation,
+      sequence: cbState.sequence.map(e => e.type === 'dr' ? { type:'dr' } : { type:'move', moveId: e.move.id }),
+      totalDmg: cbState.totalDmg,
+      hitCount: cbState.hitCount,
+      notation: cbBuildNotation(),
+      savedAt: new Date().toISOString()
+    };
+    combos.unshift(record);
+    cbPersist(combos);
+    document.getElementById('cb-save-name').value = '';
+    cbShowMsg(`Saved "${name}"!`);
+    cbRenderSavedList();
+  }
+
+  function cbBuildNotation() {
+    let parts = [];
+    cbState.sequence.forEach(e => {
+      if (e.type === 'dr') { parts.push('[DR]'); return; }
+      const sep = e.connectionType === 'cancel' ? ' xx ' : e.connectionType === 'chain' ? ' ~ ' : ' → ';
+      if (parts.length === 0) parts.push(e.move.label);
+      else parts[parts.length - 1] += sep + e.move.label;
+    });
+    return parts.join('');
+  }
+
+  function cbLoadCombo(id) {
+    const combos = cbGetSavedCombos();
+    const record = combos.find(c => c.id === id);
+    if (!record) return;
+    cbReset();
+    // restore situation
+    document.querySelectorAll('.sit-btn').forEach(b => {
+      if (b.classList.contains('sit-' + record.situation)) {
+        b.classList.add('active');
+        cbState.situation = record.situation;
+        document.getElementById('cb-sit-desc').textContent = SITUATION_DESCS[record.situation];
+      } else b.classList.remove('active');
+    });
+    // replay sequence
+    record.sequence.forEach(e => {
+      if (e.type === 'dr') cbInsertDR();
+      else cbAddMove(e.moveId);
+    });
+  }
+
+  function cbDeleteCombo(id) {
+    const combos = cbGetSavedCombos().filter(c => c.id !== id);
+    cbPersist(combos);
+    cbRenderSavedList();
+  }
+
+  function cbRenderSavedList() {
+    const combos = cbGetSavedCombos();
+    const el = document.getElementById('cb-saved-list');
+    const cnt = document.getElementById('cb-saved-count');
+    cnt.textContent = combos.length ? `(${combos.length})` : '';
+    if (!combos.length) {
+      el.innerHTML = '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--dim)">No saved combos yet.</span>';
+      return;
+    }
+    el.innerHTML = combos.map(c => `
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border)">
+        <div style="flex:1;min-width:0">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px">${c.totalDmg} dmg · ${c.hitCount} hits · ${c.situation}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.notation}</div>
+        </div>
+        <button class="cb-btn" style="padding:3px 8px;font-size:10px;flex-shrink:0" onclick="cbLoadCombo(${c.id})">Load</button>
+        <button class="cb-btn" style="padding:3px 8px;font-size:10px;color:var(--accent);flex-shrink:0" onclick="cbDeleteCombo(${c.id})">×</button>
+      </div>`).join('');
+  }
+
+  function cbCopyToClipboard() {
+    const moveEntries = cbState.sequence.filter(e => e.type === 'move');
+    if (!moveEntries.length) { cbShowMsg('Nothing to copy.', true); return; }
+    const notation = cbBuildNotation();
+    const last = moveEntries[moveEntries.length-1];
+    const advStr = last.move.knockdown ? `KD+${last.move.kdAdvantage}` : (last.advAfter >= 0 ? '+' : '') + last.advAfter;
+    const text = [
+      `Gouki Combo — ${cbState.situation.toUpperCase()}`,
+      `Notation: ${notation}`,
+      `Damage: ${cbState.totalDmg} | Hits: ${cbState.hitCount} | Final: ${advStr}`,
+      `Built with Gouki Frame Data Reference (March 2026)`
+    ].join('\n');
+    navigator.clipboard.writeText(text).then(() => cbShowMsg('Copied to clipboard!')).catch(() => cbShowMsg('Copy failed — use Export JSON.', true));
+  }
+
+  function cbExportJSON() {
+    const combos = cbGetSavedCombos();
+    if (!combos.length) { cbShowMsg('Save at least one combo first.', true); return; }
+    const blob = new Blob([JSON.stringify(combos, null, 2)], { type:'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'gouki_combos.json';
+    a.click();
+    cbShowMsg('Exported gouki_combos.json');
+  }
+
+  function cbImportJSON() {
+    document.getElementById('cb-import-file').click();
+  }
+
+  function cbHandleImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) throw new Error('Invalid format');
+        const existing = cbGetSavedCombos();
+        const merged = [...imported, ...existing].filter((c, i, arr) => arr.findIndex(x => x.id === c.id) === i);
+        cbPersist(merged);
+        cbShowMsg(`Imported ${imported.length} combo(s)!`);
+        cbRenderSavedList();
+      } catch { cbShowMsg('Import failed — invalid JSON.', true); }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  }
+
+  function cbClearAll() {
+    if (!confirm('Clear all saved combos?')) return;
+    cbPersist([]);
+    cbRenderSavedList();
+    cbShowMsg('All combos cleared.');
+  }
+
+  function cbShowMsg(msg, isError) {
+    const el = document.getElementById('cb-save-msg');
+    el.textContent = msg;
+    el.style.color = isError ? 'var(--accent)' : 'var(--green)';
+    setTimeout(() => { el.textContent = ''; }, 3000);
+  }
+
+  /* ═══ INIT ═══════════════════════════════════════════ */
+  function cbInit() {
+    if (cbState.initialized) { cbRenderSavedList(); return; }
+    cbState.initialized = true;
+    cbReset();
+    cbRenderSavedList();
+  }
+
+  /* ═══ PWA SERVICE WORKER REGISTRATION ══════════════ */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.log('SW registration failed:', err));
+    });
+  }
+</script>
+</body>
+</html>
