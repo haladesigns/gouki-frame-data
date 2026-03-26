@@ -738,6 +738,20 @@
   .sit-btn.sit-ch.active { border-color: var(--gold-border); color: var(--gold); background: var(--gold-dim); }
   .sit-btn.sit-pc.active { border-color: var(--accent-border); color: var(--accent); background: var(--accent-dim); }
   .sit-btn.sit-dr.active { border-color: var(--green-border); color: var(--green); background: var(--green-dim); }
+  .corner-toggle { display:flex; align-items:center; gap:8px; margin-bottom:14px; padding:8px 12px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); cursor:pointer; user-select:none; transition:border-color .15s, background .15s; }
+  .corner-toggle:hover { border-color:var(--border-strong); }
+  .corner-toggle.active { border-color:var(--gold-border); background:var(--gold-dim); }
+  .corner-toggle-label { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:.04em; flex:1; }
+  .corner-toggle.active .corner-toggle-label { color:var(--gold); }
+  .corner-track { width:32px; height:18px; background:var(--dim); border-radius:9px; position:relative; transition:background .2s; flex-shrink:0; }
+  .corner-toggle.active .corner-track { background:var(--gold); }
+  .corner-knob { width:12px; height:12px; background:#fff; border-radius:50%; position:absolute; top:3px; left:3px; transition:transform .2s; }
+  .corner-toggle.active .corner-knob { transform:translateX(14px); }
+  .corner-badge { font-family:'IBM Plex Mono',monospace; font-size:9px; padding:1px 5px; border-radius:2px; background:var(--gold-dim); color:var(--gold); border:1px solid var(--gold-border); margin-left:4px; }
+  .burnout-toggle.active { border-color:var(--accent-border); background:var(--accent-dim); }
+  .burnout-toggle.active .corner-toggle-label { color:var(--accent); }
+  .burnout-toggle.active .corner-track { background:var(--accent); }
+  .burnout-badge { font-family:'IBM Plex Mono',monospace; font-size:9px; padding:1px 5px; border-radius:2px; background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-border); margin-left:4px; }
   .sit-desc { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 14px; padding: 6px 10px; background: var(--surface2); border-radius: 4px; border-left: 3px solid var(--border-strong); }
 
   /* sequence strip */
@@ -1662,6 +1676,125 @@
       </div>
     </div>
 
+    <div class="section-title">Oki loops — position + frame math</div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">The Tatsu MK Loop</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat dmg">~1620 dmg</span>
+          <span class="combo-stat diff">Intermediate</span>
+          <span class="combo-stat">No meter</span>
+          <span class="combo-stat">Knockdown</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">st.MK</span>
+        <span class="combo-arrow">xx</span>
+        <span class="combo-cancel">cancel</span>
+        <span class="combo-input">Tatsu MK</span>
+        <span class="combo-arrow">→</span>
+        <span class="combo-input">fwd dash</span>
+        <span class="combo-arrow">→</span>
+        <span class="combo-input">fwd dash</span>
+        <span class="combo-arrow">→</span>
+        <span class="combo-input">meaty st.MP</span>
+      </div>
+      <div class="combo-why">
+        <strong>Why st.MK first:</strong> Tatsu MK whiffs on crouching opponents. st.MK forces crouchers to stand, so Tatsu MK reliably connects regardless of opponent stance.<br><br>
+        <strong>The frame math (Zephyr's double dash setup):</strong><br>
+        Tatsu MK gives KD+41. Gouki's forward dash = 19f. Two dashes = 38f. 41 − 38 = <strong>+3 remaining</strong>.<br>
+        st.MP has 6f startup. 6 − 3 = 3f gap — the fastest move in the game is 4f, so st.MP lands as a guaranteed meaty.<br><br>
+        <strong>Why it matters:</strong> This brings you back to exactly the same +1 pressure scenario you started from but now in or near the corner. The loop repeats: meaty st.MP → continue pressure → knockdown → double dash → meaty st.MP. Low damage per cycle but relentless positioning advantage.
+      </div>
+    </div>
+
+    <div class="section-title">Meaty setups — frame math reference</div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">Forward throw → meaty cr.MK</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat">KD+28</span>
+          <span class="combo-stat diff">Beginner</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">Fwd throw</span>
+        <span class="combo-arrow">KD+28</span>
+        <span class="combo-input">walk forward</span>
+        <span class="combo-arrow">→</span>
+        <span class="combo-input">meaty cr.MK</span>
+      </div>
+      <div class="combo-why">
+        <strong>Math:</strong> KD+28. cr.MK has 8f startup and 3 active frames — wide enough window to walk forward and still time the meaty comfortably. cr.MK on meaty is effectively +3 hit / -4 block from the best active frame. Your primary wakeup tool after forward throw.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">Tatsu MK → meaty cr.MK (no dash)</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat">KD+41</span>
+          <span class="combo-stat diff">Beginner</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">Tatsu MK</span>
+        <span class="combo-arrow">KD+41</span>
+        <span class="combo-input">walk forward</span>
+        <span class="combo-arrow">→</span>
+        <span class="combo-input">meaty cr.MK</span>
+      </div>
+      <div class="combo-why">
+        <strong>Math:</strong> KD+41 is the largest meterless knockdown advantage you can get from a light confirm. Walk forward freely — you have 41 frames minus however long your walk takes. cr.MK's 3 active frames give you wiggle room on timing. On meaty hit you're +3 into cr.MK xx Hadouken for free damage.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">Tatsu MK → double dash → meaty st.MP</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat">KD+41</span>
+          <span class="combo-stat diff">Intermediate</span>
+          <span class="combo-stat">Corner loop</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">Tatsu MK</span>
+        <span class="combo-arrow">KD+41</span>
+        <span class="combo-input">dash</span>
+        <span class="combo-arrow">+</span>
+        <span class="combo-input">dash</span>
+        <span class="combo-arrow">= 38f</span>
+        <span class="combo-input">meaty st.MP</span>
+      </div>
+      <div class="combo-why">
+        <strong>Math:</strong> KD+41 − (19f + 19f) = <strong>+3</strong>. st.MP is 6f startup. 6 − 3 = 3f gap — beats the fastest move in the game (4f). Guaranteed meaty regardless of wakeup timing.<br><br>
+        <strong>Why double dash over walk:</strong> The dashes cover ground faster than walking, putting you in the correct range for st.MP. Walking to the same spot takes too many frames and burns your +3 window. This setup is the foundation of Gouki's pressure loop.
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-top">
+        <div><div class="combo-name">L2 Empyrean → meaty (corner)</div></div>
+        <div class="combo-meta">
+          <span class="combo-stat">KD+97 corner</span>
+          <span class="combo-stat diff">Easy — huge window</span>
+        </div>
+      </div>
+      <div class="combo-sequence">
+        <span class="combo-input">L2 Empyrean</span>
+        <span class="combo-arrow">KD+97 corner</span>
+        <span class="combo-input">walk or dash</span>
+        <span class="combo-arrow">→</span>
+        <span class="combo-input">meaty anything</span>
+      </div>
+      <div class="combo-why">
+        <strong>Math:</strong> KD+97 in corner gives you 97 frames — nearly 1.5 seconds of wakeup time. You can walk forward, jump, fake a crossup, set up an ambiguous meaty, or simply stand and wait. This is the biggest oki swing in Gouki's kit and why L2 Empyrean is often preferred over L3 Sip when you're not in kill range.
+      </div>
+    </div>
+
   </section>
 
   <!-- CANCEL ROUTES -->
@@ -2407,6 +2540,16 @@
             <button class="sit-btn sit-pc" onclick="setSituation('pc',this)">Punish Counter</button>
           </div>
           <div class="cb-hint" id="cb-sit-desc">Normal hit — standard frame data applies.</div>
+          <!-- Corner toggle -->
+          <div class="corner-toggle" id="corner-toggle" onclick="toggleCorner()">
+            <span class="corner-toggle-label">Corner</span>
+            <div class="corner-track"><div class="corner-knob"></div></div>
+          </div>
+          <!-- Burnout toggle -->
+          <div class="corner-toggle burnout-toggle" id="burnout-toggle" onclick="toggleBurnout()">
+            <span class="corner-toggle-label">Opponent in Burnout <span style="font-size:9px;color:var(--muted)">(+4 blockstun to all moves)</span></span>
+            <div class="corner-track"><div class="corner-knob"></div></div>
+          </div>
         </div>
 
         <!-- sequence strip -->
@@ -2533,6 +2676,8 @@
        chBonus, pcBonus: frame advantage bonus on CH/PC
        pcJuggle: bool — juggle state on PC
        scaling: inherent damage scaling penalty (0–1)
+       cornerKdAdvantage: KD advantage in corner (overrides kdAdvantage when corner=true)
+       cornerOnly: bool — only valid as a cancel target in corner (pushback removed)
        group: string — picker group label
        notes: string
   ═══════════════════════════════════════════════════ */
@@ -2542,41 +2687,46 @@
       name: 'Gouki',
       moves: [
         /* ─ STANDING NORMALS ─ */
-        { id:'st_lp',  label:'st.LP',  fullname:'Standing LP',    category:'normal',  group:'Standing',  startup:4,  onHit:4,  onBlock:-1,  active:3,  damage:300,  hits:1, cancelFlags:{chain:true, special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Chain / Special / Super cancel.' },
-        { id:'st_mp',  label:'st.MP',  fullname:'Standing MP',    category:'normal',  group:'Standing',  startup:6,  onHit:4,  onBlock:1,   active:4,  damage:600,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:true, dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+1 on block. TC into second st.MP (Viscera Piercer).' },
-        { id:'st_hp',  label:'st.HP',  fullname:'Standing HP',    category:'normal',  group:'Standing',  startup:9,  onHit:3,  onBlock:-3,  active:5,  damage:800,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:6,  pcJuggle:false, scaling:0,   notes:'Special / Super cancel.' },
-        { id:'st_lk',  label:'st.LK',  fullname:'Standing LK',    category:'normal',  group:'Standing',  startup:5,  onHit:2,  onBlock:-4,  active:3,  damage:300,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Special / Super cancel.' },
-        { id:'st_mk',  label:'st.MK',  fullname:'Standing MK',    category:'normal',  group:'Standing',  startup:7,  onHit:3,  onBlock:-3,  active:5,  damage:700,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:true, dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Forces standing on crouchers. TC into st.HK.' },
-        { id:'st_hk',  label:'st.HK',  fullname:'Standing HK',    category:'normal',  group:'Standing',  startup:13, onHit:7,  onBlock:3,   active:3,  damage:800,  hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+3 on block. No cancel — 2nd hit whiffs on crouchers.' },
-        /* TC 2nd hits — virtual moves representing the cancellable 2nd hit of TCs */
-        { id:'st_mp2', label:'st.MP②', fullname:'Viscera Piercer 2nd hit', category:'normal', group:'TC 2nd', startup:7, onHit:-1, onBlock:-6, active:3, damage:700, hits:1, cancelFlags:{chain:false,special:true,super:true,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0, chBonus:2, pcBonus:4, pcJuggle:false, scaling:0, notes:'2nd hit of Viscera Piercer TC — Special/Super cancellable.' },
+        { id:'st_lp',  label:'st.LP',  fullname:'Standing LP',    category:'normal',  group:'Standing',  startup:4,  onHit:4,  onBlock:-1,  active:3,  damage:300,  hits:1, cancelFlags:{chain:true, special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Chain / Special / Super cancel.' },
+        { id:'st_mp',  label:'st.MP',  fullname:'Standing MP',    category:'normal',  group:'Standing',  startup:6,  onHit:4,  onBlock:1,   active:4,  damage:600,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:true, dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+1 on block. TC into second st.MP (Viscera Piercer).' },
+        { id:'st_hp',  label:'st.HP',  fullname:'Standing HP',    category:'normal',  group:'Standing',  startup:9,  onHit:3,  onBlock:-3,  active:5,  damage:800,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:6,  pcJuggle:false, scaling:0,   notes:'Special / Super cancel.' },
+        { id:'st_lk',  label:'st.LK',  fullname:'Standing LK',    category:'normal',  group:'Standing',  startup:5,  onHit:2,  onBlock:-4,  active:3,  damage:300,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Special / Super cancel.' },
+        { id:'st_mk',  label:'st.MK',  fullname:'Standing MK',    category:'normal',  group:'Standing',  startup:7,  onHit:3,  onBlock:-3,  active:5,  damage:700,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:true, dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Forces standing on crouchers. TC into st.HK.' },
+        { id:'st_hk',  label:'st.HK',  fullname:'Standing HK',    category:'normal',  group:'Standing',  startup:13, onHit:7,  onBlock:3,   active:3,  damage:800,  hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+3 on block. No cancel — 2nd hit whiffs on crouchers.' },
+        /* TC 2nd hits */
+        { id:'st_mp2', label:'st.MP②', fullname:'Viscera Piercer 2nd hit', category:'normal', group:'TC 2nd', startup:7, onHit:-1, onBlock:-6, active:3, damage:700, hits:1, cancelFlags:{chain:false,special:true,super:true,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0, cornerKdAdvantage:0, cornerOnly:false, chBonus:2, pcBonus:4, pcJuggle:false, scaling:0, notes:'2nd hit of Viscera Piercer TC — Special/Super cancellable.' },
         /* ─ CROUCHING NORMALS ─ */
-        { id:'cr_lp',  label:'cr.LP',  fullname:'Crouching LP',   category:'normal',  group:'Crouching', startup:4,  onHit:5,  onBlock:-1,  active:2,  damage:300,  hits:1, cancelFlags:{chain:true, special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Core weapon. Hit confirm starter.' },
-        { id:'cr_mp',  label:'cr.MP',  fullname:'Crouching MP',   category:'normal',  group:'Crouching', startup:6,  onHit:6,  onBlock:-1,  active:3,  damage:600,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+6 on hit. Strong punish starter.' },
-        { id:'cr_hp',  label:'cr.HP',  fullname:'Crouching HP',   category:'normal',  group:'Crouching', startup:8,  onHit:1,  onBlock:-8,  active:8,  damage:900,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:6,  pcJuggle:true,  scaling:0,   notes:'Anti-air inv 8–16. PC gives juggle state.' },
-        { id:'cr_lk',  label:'cr.LK',  fullname:'Crouching LK',   category:'normal',  group:'Crouching', startup:5,  onHit:3,  onBlock:-3,  active:2,  damage:200,  hits:1, cancelFlags:{chain:true, special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Low. Chain only — no special cancel.' },
-        { id:'cr_mk',  label:'cr.MK',  fullname:'Crouching MK',   category:'normal',  group:'Crouching', startup:8,  onHit:1,  onBlock:-6,  active:3,  damage:500,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:true},  cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0.2, notes:'Core weapon. 20% scaling. DR-cancellable.' },
-        { id:'cr_hk',  label:'cr.HK',  fullname:'Crouching HK',   category:'normal',  group:'Crouching', startup:9,  onHit:0,  onBlock:-12, active:3,  damage:900,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:40, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Sweep. KD+40.' },
+        { id:'cr_lp',  label:'cr.LP',  fullname:'Crouching LP',   category:'normal',  group:'Crouching', startup:4,  onHit:5,  onBlock:-1,  active:2,  damage:300,  hits:1, cancelFlags:{chain:true, special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Core weapon. Hit confirm starter.' },
+        { id:'cr_mp',  label:'cr.MP',  fullname:'Crouching MP',   category:'normal',  group:'Crouching', startup:6,  onHit:6,  onBlock:-1,  active:3,  damage:600,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+6 on hit. Strong punish starter.' },
+        { id:'cr_hp',  label:'cr.HP',  fullname:'Crouching HP',   category:'normal',  group:'Crouching', startup:8,  onHit:1,  onBlock:-8,  active:8,  damage:900,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:6,  pcJuggle:true,  scaling:0,   notes:'Anti-air inv 8–16. PC gives juggle state.' },
+        { id:'cr_lk',  label:'cr.LK',  fullname:'Crouching LK',   category:'normal',  group:'Crouching', startup:5,  onHit:3,  onBlock:-3,  active:2,  damage:200,  hits:1, cancelFlags:{chain:true, special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Low. Chain only — no special cancel.' },
+        { id:'cr_mk',  label:'cr.MK',  fullname:'Crouching MK',   category:'normal',  group:'Crouching', startup:8,  onHit:1,  onBlock:-6,  active:3,  damage:500,  hits:1, cancelFlags:{chain:false,special:true, super:true, tc:false,dr:true},  cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0.2, notes:'Core weapon. 20% scaling. DR-cancellable.' },
+        { id:'cr_hk',  label:'cr.HK',  fullname:'Crouching HK',   category:'normal',  group:'Crouching', startup:9,  onHit:0,  onBlock:-12, active:3,  damage:900,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:40, cornerKdAdvantage:40, cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Sweep. KD+40.' },
         /* ─ UNIQUE ─ */
-        { id:'f_mp',   label:'f+MP',   fullname:'Skull Splitter',  category:'normal',  group:'Unique',    startup:20, onHit:3,  onBlock:-1,  active:4,  damage:600,  hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Overhead.' },
-        { id:'f_mk',   label:'f+MK',   fullname:'Resso Snap Kick', category:'normal',  group:'Unique',    startup:10, onHit:5,  onBlock:-4,  active:3,  damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+5 on hit.' },
+        { id:'f_mp',   label:'f+MP',   fullname:'Skull Splitter',  category:'normal',  group:'Unique',    startup:20, onHit:3,  onBlock:-1,  active:4,  damage:600,  hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'Overhead.' },
+        { id:'f_mk',   label:'f+MK',   fullname:'Resso Snap Kick', category:'normal',  group:'Unique',    startup:10, onHit:5,  onBlock:-4,  active:3,  damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:2, pcBonus:4,  pcJuggle:false, scaling:0,   notes:'+5 on hit.' },
         /* ─ THROWS ─ */
-        { id:'fwd_throw',label:'Throw', fullname:'Forward Throw',  category:'throw',   group:'Throws',    startup:5,  onHit:0,  onBlock:0,   active:3,  damage:1200, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:28, chBonus:0, pcBonus:0,  pcJuggle:false, scaling:0,   notes:'KD+28. Oki starter.' },
+        { id:'fwd_throw',label:'Throw', fullname:'Forward Throw',  category:'throw',   group:'Throws',    startup:5,  onHit:0,  onBlock:0,   active:3,  damage:1200, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:28, cornerKdAdvantage:28, cornerOnly:false, chBonus:0, pcBonus:0,  pcJuggle:false, scaling:0,   notes:'KD+28. Oki starter.' },
         /* ─ SPECIALS ─ */
-        { id:'hadou_lp', label:'Hadouken LP', fullname:'Gou Hadouken LP', category:'special', group:'Hadouken', startup:16, onHit:0, onBlock:-4,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Fullscreen.' },
-        { id:'hadou_mp', label:'Hadouken MP', fullname:'Gou Hadouken MP', category:'special', group:'Hadouken', startup:14, onHit:0, onBlock:-6,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Main cancel target.' },
-        { id:'hadou_hp', label:'Hadouken HP', fullname:'Gou Hadouken HP', category:'special', group:'Hadouken', startup:12, onHit:0, onBlock:-8,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Fastest Hadouken.' },
-        { id:'hadou_od', label:'Hadouken OD', fullname:'Gou Hadouken OD', category:'special', group:'Hadouken', startup:12, onHit:0, onBlock:2,   active:0, damage:1000, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:55, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'+2 on block. KD+55 on hit.' },
-        { id:'dp_lp',   label:'DP LP',   fullname:'Gou Shoryuken LP',  category:'special', group:'DP',      startup:5,  onHit:0, onBlock:-23, active:10, damage:1100, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:38, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'AA inv 1–14. KD+38. Super-cancellable.' },
-        { id:'dp_mp',   label:'DP MP',   fullname:'Gou Shoryuken MP',  category:'special', group:'DP',      startup:6,  onHit:0, onBlock:-30, active:10, damage:1300, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:32, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+32. Super-cancellable.' },
-        { id:'dp_hp',   label:'DP HP',   fullname:'Gou Shoryuken HP',  category:'special', group:'DP',      startup:7,  onHit:0, onBlock:-36, active:11, damage:1500, hits:3, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:30, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+30. Super-cancellable.' },
-        { id:'tatsu_lk',label:'Tatsu LK',fullname:'Tatsumaki LK',      category:'special', group:'Tatsu',   startup:12, onHit:0, onBlock:-13, active:2,  damage:600,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:33, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Whiffs on crouchers. KD+33. Super-cancellable.' },
-        { id:'tatsu_mk',label:'Tatsu MK',fullname:'Tatsumaki MK',      category:'special', group:'Tatsu',   startup:11, onHit:0, onBlock:-13, active:5,  damage:1000, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:41, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+41 best meterless oki. Super-cancellable.' },
-        { id:'tatsu_hk',label:'Tatsu HK',fullname:'Tatsumaki HK',      category:'special', group:'Tatsu',   startup:7,  onHit:0, onBlock:-59, active:12, damage:1600, hits:4, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:34, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Hits crouchers. -59 block. Super-cancellable.' },
+        { id:'hadou_lp', label:'Hadouken LP', fullname:'Gou Hadouken LP', category:'special', group:'Hadouken', startup:16, onHit:0, onBlock:-4,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Fullscreen.' },
+        { id:'hadou_mp', label:'Hadouken MP', fullname:'Gou Hadouken MP', category:'special', group:'Hadouken', startup:14, onHit:0, onBlock:-6,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Main cancel target.' },
+        { id:'hadou_hp', label:'Hadouken HP', fullname:'Gou Hadouken HP', category:'special', group:'Hadouken', startup:12, onHit:0, onBlock:-8,  active:0, damage:700,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:false, kdAdvantage:0,  cornerKdAdvantage:0,  cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Fastest Hadouken.' },
+        { id:'hadou_od', label:'Hadouken OD', fullname:'Gou Hadouken OD', category:'special', group:'Hadouken', startup:12, onHit:0, onBlock:2,   active:0, damage:1000, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true,  kdAdvantage:55, cornerKdAdvantage:55, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'+2 on block. KD+55 on hit.' },
+        /* DP — cornerOnly:true because pushback midscreen can cause drop after normal cancel */
+        { id:'dp_lp',   label:'DP LP',   fullname:'Gou Shoryuken LP',  category:'special', group:'DP', startup:5,  onHit:0, onBlock:-23, active:10, damage:1100, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:38, cornerKdAdvantage:38, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'AA inv 1–14. KD+38. Super-cancellable.' },
+        { id:'dp_mp',   label:'DP MP',   fullname:'Gou Shoryuken MP',  category:'special', group:'DP', startup:6,  onHit:0, onBlock:-30, active:10, damage:1300, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:32, cornerKdAdvantage:32, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+32. Super-cancellable.' },
+        { id:'dp_hp',   label:'DP HP',   fullname:'Gou Shoryuken HP',  category:'special', group:'DP', startup:7,  onHit:0, onBlock:-36, active:11, damage:1500, hits:3, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:30, cornerKdAdvantage:30, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+30. Corner reliable — pushback midscreen can cause drop. Super-cancellable.' },
+        /* Tatsu HK — cornerOnly after cr.LP because pushback midscreen causes whiff */
+        { id:'tatsu_lk',label:'Tatsu LK',fullname:'Tatsumaki LK', category:'special', group:'Tatsu', startup:12, onHit:0, onBlock:-13, active:2,  damage:600,  hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:33, cornerKdAdvantage:33, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Whiffs on crouchers. KD+33. Super-cancellable.' },
+        { id:'tatsu_mk',label:'Tatsu MK',fullname:'Tatsumaki MK', category:'special', group:'Tatsu', startup:11, onHit:0, onBlock:-13, active:5,  damage:1000, hits:2, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:41, cornerKdAdvantage:41, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'KD+41 best meterless oki. Super-cancellable.' },
+        { id:'tatsu_hk',label:'Tatsu HK',fullname:'Tatsumaki HK', category:'special', group:'Tatsu', startup:7,  onHit:0, onBlock:-59, active:12, damage:1600, hits:4, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true,  knockdown:true,  kdAdvantage:34, cornerKdAdvantage:34, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Hits crouchers. -59 block. Midscreen can whiff after lights — reliable in corner. Super-cancellable.' },
+        /* Corner-only DP routes — only appear in picker when corner is on */
+        { id:'dp_hp_corner', label:'DP HP ⬡', fullname:'Gou Shoryuken HP (corner route)', category:'special', group:'DP', startup:7, onHit:0, onBlock:-36, active:11, damage:1500, hits:3, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:true, knockdown:true, kdAdvantage:30, cornerKdAdvantage:30, cornerOnly:true, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Corner only — pushback removed. Reliable ender after cr.LP or cr.MP confirms. Super-cancellable.' },
         /* ─ SUPERS ─ */
-        { id:'super_l1',label:'L1 Messatsu', fullname:'Messatsu Gohado',  category:'super', group:'Super', startup:10, onHit:0, onBlock:-41, active:0, damage:2200, hits:3, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:9,  chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Strike inv 1–9.' },
-        { id:'super_l2',label:'L2 Empyrean', fullname:"Empyrean's End",   category:'super', group:'Super', startup:9,  onHit:0, onBlock:-35, active:3, damage:2800, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:63, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Full inv 1–9. KD up to +97 corner.' },
-        { id:'super_l3',label:'L3 Sip',      fullname:'Sip of Calamity',  category:'super', group:'Super', startup:8,  onHit:0, onBlock:-41, active:4, damage:4000, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:18, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Full inv 1–8. 4000 dmg.' },
+        { id:'super_l1',label:'L1 Messatsu', fullname:'Messatsu Gohado',  category:'super', group:'Super', startup:10, onHit:0, onBlock:-41, active:0, damage:2200, hits:3, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:9,  cornerKdAdvantage:9,  cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Strike inv 1–9.' },
+        /* L2 Empyrean — the big one: KD+29 midscreen, KD+97 corner */
+        { id:'super_l2',label:'L2 Empyrean', fullname:"Empyrean's End",   category:'super', group:'Super', startup:9,  onHit:0, onBlock:-35, active:3, damage:2800, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:29, cornerKdAdvantage:97, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Full inv 1–9. KD+29 midscreen → KD+97 corner. The biggest oki swing in the game.' },
+        { id:'super_l3',label:'L3 Sip',      fullname:'Sip of Calamity',  category:'super', group:'Super', startup:8,  onHit:0, onBlock:-41, active:4, damage:4000, hits:1, cancelFlags:{chain:false,special:false,super:false,tc:false,dr:false}, cancelIntoSuper:false, knockdown:true, kdAdvantage:18, cornerKdAdvantage:18, cornerOnly:false, chBonus:0, pcBonus:0, pcJuggle:false, scaling:0, notes:'Full inv 1–8. 4000 dmg.' },
       ]
     },
     opponent: {
@@ -2609,13 +2759,31 @@
   // { type: 'move'|'dr', move?, connectionType?, drBonus?, scaledDmg?, runningScaling?, advAfter? }
   let cbState = {
     situation: 'normal',
+    corner: false,
+    burnout: false,
     sequence:  [],
     totalDmg:  0,
     hitCount:  0,
     lastAdvantage: null,
-    drPending: false,  // a DR has been inserted, not yet consumed
+    drPending: false,
     initialized: false
   };
+
+  /* ═══ CORNER TOGGLE ══════════════════════════════════ */
+  function toggleCorner() {
+    cbState.corner = !cbState.corner;
+    const el = document.getElementById('corner-toggle');
+    el.classList.toggle('active', cbState.corner);
+    cbRebuildAll();
+  }
+
+  /* ═══ BURNOUT TOGGLE ══════════════════════════════════ */
+  function toggleBurnout() {
+    cbState.burnout = !cbState.burnout;
+    const el = document.getElementById('burnout-toggle');
+    el.classList.toggle('active', cbState.burnout);
+    cbRebuildAll();
+  }
 
   /* ═══ SITUATION ══════════════════════════════════════ */
   function setSituation(sit, btn) {
@@ -2634,7 +2802,11 @@
   }
 
   function computeAdvAfter(move, isFirst, situation, drConsumed) {
-    if (move.knockdown) return move.kdAdvantage;
+    if (move.knockdown) {
+      return (cbState.corner && move.cornerKdAdvantage)
+        ? move.cornerKdAdvantage
+        : move.kdAdvantage;
+    }
     let adv = move.onHit;
     if (isFirst) {
       if (situation === 'ch') adv += (move.chBonus || 2);
@@ -2642,6 +2814,11 @@
     }
     if (drConsumed) adv += 4;
     return adv;
+  }
+
+  // Burnout applies to on-block advantage — used in sequence hint and summary
+  function getBlockAdv(move) {
+    return move.onBlock + (cbState.burnout ? 4 : 0);
   }
 
   /* ═══ CONNECTION TYPE ════════════════════════════════ */
@@ -2745,6 +2922,7 @@
   function cbReset() {
     cbState.sequence = []; cbState.totalDmg = 0; cbState.hitCount = 0;
     cbState.lastAdvantage = null; cbState.drPending = false;
+    // corner state intentionally preserved across resets
     cbRebuildAll();
   }
 
@@ -2781,6 +2959,12 @@
     const el = document.getElementById('cb-sequence');
     const hc = document.getElementById('cb-hit-count');
     hc.textContent = cbState.hitCount ? `(${cbState.hitCount} hit${cbState.hitCount>1?'s':''})` : '';
+    if (cbState.corner) {
+      hc.innerHTML = (hc.textContent || '') + ' <span class="corner-badge">CORNER</span>';
+    }
+    if (cbState.burnout) {
+      hc.innerHTML = (hc.innerHTML || hc.textContent || '') + ' <span class="burnout-badge">BURNOUT</span>';
+    }
 
     if (!cbState.sequence.length) {
       el.innerHTML = '<span class="cb-seq-empty">Pick a starter below</span>';
@@ -2823,13 +3007,19 @@
       hint.innerHTML = `<span class="link-ok">Super landed — combo complete.</span>`;
     } else {
       const adv = last.advAfter + (cbState.drPending ? 4 : 0);
+      const blockAdv = getBlockAdv(last.move);
+      const burnoutNote = cbState.burnout && last.move.onBlock < 0 && blockAdv >= 0
+        ? ` <span style="color:var(--accent);font-size:9px">(normally ${last.move.onBlock} — burnout makes it ${blockAdv >= 0 ? '+' : ''}${blockAdv} on block)</span>`
+        : cbState.burnout && last.move.onBlock < 0
+        ? ` <span style="color:var(--muted);font-size:9px">(${blockAdv >= 0 ? '+' : ''}${blockAdv} on block in burnout)</span>`
+        : '';
       const cls = adv >= 4 ? 'link-ok' : adv >= 0 ? 'chain-ok' : 'invalid';
       hint.innerHTML = `<span class="${cls}">Advantage: ${adv >= 0 ? '+' : ''}${adv}${cbState.drPending ? ' (+4 DR pending)' : ''} — ${
         adv >= 4 ? 'comfortable link window' :
         adv >= 2 ? 'tight link possible' :
         adv >= 0 ? 'neutral/plus — cancel or end' :
         'minus — unsafe if blocked here'
-      }</span>`;
+      }</span>${burnoutNote}`;
     }
   }
 
@@ -2868,6 +3058,8 @@
     let html = '';
     Object.entries(groupMap).forEach(([grp, moves]) => {
       moves.forEach(m => {
+        // hide cornerOnly moves when not in corner mode
+        if (m.cornerOnly && !cbState.corner) return;
         const conn = getConnectionType(prevMoveEntry, m, cbState.drPending);
         let cls = '', disabled = '', connLabel = '', windowStr = '';
         if (!prevMoveEntry) {
@@ -2989,10 +3181,14 @@
     scEl.textContent   = sc + '%';
 
     if (last.move.knockdown) {
-      const kd = last.move.kdAdvantage;
+      const kd = cbState.corner && last.move.cornerKdAdvantage
+        ? last.move.cornerKdAdvantage : last.move.kdAdvantage;
+      const midKd = last.move.kdAdvantage;
+      const isCornerBonus = cbState.corner && last.move.cornerKdAdvantage && last.move.cornerKdAdvantage !== midKd;
       advEl.textContent = 'KD+' + kd; advEl.className = 'cb-stat-val good';
       okiEl.className = 'cb-oki has-kd';
-      okiEl.innerHTML = `<strong>Knockdown — KD+${kd}</strong><br>` + (
+      okiEl.innerHTML = `<strong>${cbState.corner ? 'Corner — ' : ''}KD+${kd}</strong>${isCornerBonus ? ` <span style="font-size:10px;color:var(--gold)">(midscreen: KD+${midKd})</span>` : ''}<br>` + (
+        kd >= 80 ? 'Massive corner oki window. Meaty cr.MK from full walk distance, or go for ambiguous crossup.' :
         kd >= 40 ? 'Wide oki window. Walk forward, land meaty cr.MK (8f startup, 3 active).' :
         kd >= 28 ? 'Comfortable oki. Meaty cr.MK is your go-to.' :
         kd >= 14 ? 'Tight window. Meaty cr.LP recommended (4f startup).' :
@@ -3004,14 +3200,18 @@
       okiEl.innerHTML = '<strong>Super ender.</strong> Combo complete.';
     } else {
       const adv = last.advAfter;
+      const blockAdv = getBlockAdv(last.move);
       advEl.textContent = (adv >= 0 ? '+' : '') + adv;
       advEl.className   = 'cb-stat-val' + (adv >= 2 ? ' good' : adv >= 0 ? ' warn' : ' bad');
       okiEl.className   = 'cb-oki';
-      okiEl.innerHTML   = adv <= -4
+      const burnoutLine = cbState.burnout
+        ? `<br><span style="color:var(--accent);font-size:11px">Burnout: on block this move is ${blockAdv >= 0 ? '+' : ''}${blockAdv} (normally ${last.move.onBlock >= 0 ? '+' : ''}${last.move.onBlock})${blockAdv >= 0 ? ' — now your turn even on block' : ''}.</span>`
+        : '';
+      okiEl.innerHTML = (adv <= -4
         ? '<strong>Danger.</strong> Minus on hit — extend with a cancel or you\'re unsafe.'
         : adv >= 0
         ? '<strong>Plus.</strong> You can pressure, throw, or return to neutral.'
-        : '<strong>Slightly minus.</strong> Respect their options.';
+        : '<strong>Slightly minus.</strong> Respect their options.') + burnoutLine;
     }
   }
 
@@ -3070,6 +3270,8 @@
       id: Date.now(),
       name,
       situation: cbState.situation,
+      corner: cbState.corner,
+      burnout: cbState.burnout,
       sequence: cbState.sequence.map(e => e.type === 'dr' ? { type:'dr' } : { type:'move', moveId: e.move.id }),
       totalDmg: cbState.totalDmg,
       hitCount: cbState.hitCount,
@@ -3099,7 +3301,12 @@
     const record = combos.find(c => c.id === id);
     if (!record) return;
     cbReset();
-    // restore situation
+    // restore corner
+    cbState.corner = !!record.corner;
+    document.getElementById('corner-toggle').classList.toggle('active', cbState.corner);
+    // restore burnout
+    cbState.burnout = !!record.burnout;
+    document.getElementById('burnout-toggle').classList.toggle('active', cbState.burnout);
     document.querySelectorAll('.sit-btn').forEach(b => {
       if (b.classList.contains('sit-' + record.situation)) {
         b.classList.add('active');
@@ -3133,7 +3340,7 @@
       <div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border)">
         <div style="flex:1;min-width:0">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px">${c.totalDmg} dmg · ${c.hitCount} hits · ${c.situation}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px">${c.totalDmg} dmg · ${c.hitCount} hits · ${c.situation}${c.corner ? ' · <span style="color:var(--gold)">corner</span>' : ''}</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.notation}</div>
         </div>
         <button class="cb-btn" style="padding:3px 8px;font-size:10px;flex-shrink:0" onclick="cbLoadCombo(${c.id})">Load</button>
